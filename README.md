@@ -243,6 +243,20 @@ insta-post/
 - ✅ Stack: fechada
 - 🚧 **Próximo passo: implementação real**
 
+## 🚀 Funcionalidades Futuras (V2)
+
+Planejamento de funcionalidades para versões futuras que agregarão valor e diferenciais competitivos:
+
+- **Analytics e Performance:** Métricas de engajamento, sugestões de melhor horário, biblioteca de hashtags inteligente
+- **Templates e Recursos:** Biblioteca de templates, Brand Kit, biblioteca de assets
+- **Agendamento Avançado:** Agendamento recorrente, agendamento em massa, calendário editorial
+- **Multi-plataforma:** Integração com TikTok, LinkedIn, Facebook, Twitter/X
+- **Colaboração:** Gerenciamento de equipes, workflow de aprovação
+- **Inteligência Avançada:** A/B testing, sugestões baseadas em sucesso, geração em lote
+- **Editor Avançado:** Ferramentas de design mais completas, editor de vídeo básico
+
+Para mais detalhes, consulte [`Especificacoes-Funcionais.md`](./Especificacoes-Funcionais.md) - Seção 9.
+
 ## 📝 Decisões Importantes
 
 - Supabase NÃO roda em Vercel
@@ -264,7 +278,10 @@ Este projeto segue os princípios:
 
 ## 📄 Documentação Adicional
 
-Para mais detalhes técnicos e decisões de arquitetura, consulte o documento [`Sistema.md`](../Sistema.md) (fonte única de verdade para decisões técnicas).
+- **[Sistema.md](../Sistema.md)** - Fonte única de verdade para decisões técnicas
+- **[Especificacoes-Funcionais.md](./Especificacoes-Funcionais.md)** - Detalhes funcionais e fluxos
+- **[TODO-DESENVOLVIMENTO.md](./TODO-DESENVOLVIMENTO.md)** - Lista de tarefas para desenvolvimento
+- **[INSTRUCOES-DESENVOLVIMENTO.md](./INSTRUCOES-DESENVOLVIMENTO.md)** - Princípios e padrões de código (Clean Code, Martin Fowler)
 
 ## 📄 Licença
 

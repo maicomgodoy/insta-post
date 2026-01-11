@@ -375,3 +375,175 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 Este documento será atualizado conforme novas instruções e detalhes forem fornecidos.
 
 **Status:** Em desenvolvimento - aguardando mais instruções
+
+---
+
+## 9. FUNCIONALIDADES V2 (FUTURAS)
+
+Funcionalidades planejadas para versões futuras que agregarão valor e diferenciais competitivos ao produto.
+
+### 9.1. Analytics e Performance
+
+- **Análise de Performance dos Posts**
+  - Métricas de engajamento (likes, comentários, compartilhamentos)
+  - Visualização de posts que performaram melhor
+  - Identificação de padrões de sucesso
+  - Relatórios mensais/semanais automáticos
+
+- **Sugestões de Melhor Horário para Postar**
+  - Análise de histórico de posts e engajamento
+  - Recomendações de horários otimizados por conta
+  - Insights baseados em dados reais
+
+- **Biblioteca de Hashtags Inteligente**
+  - Sugestões de hashtags baseadas no conteúdo
+  - Histórico de hashtags que geraram mais engajamento
+  - Agrupamento de hashtags por tema/nicho
+  - Salvamento de conjuntos de hashtags favoritas
+
+### 9.2. Templates e Recursos
+
+- **Biblioteca de Templates**
+  - Templates pré-definidos por nicho/tema
+  - Templates personalizáveis
+  - Categorias: negócios, lifestyle, produto, educacional, etc.
+  - Compartilhamento de templates entre usuários (opcional)
+
+- **Brand Kit**
+  - Cores da marca salvas
+  - Fontes preferidas
+  - Logo/watermark personalizado
+  - Aplicação automática nas criações
+  - Identidade visual consistente
+
+- **Biblioteca de Assets**
+  - Banco de imagens integrado (stock photos)
+  - Ícones e elementos gráficos
+  - Filtros e efeitos pré-configurados
+  - Biblioteca pessoal de assets favoritos
+
+### 9.3. Agendamento Avançado
+
+- **Agendamento Recorrente**
+  - Posts semanais (ex: toda segunda-feira)
+  - Posts mensais (ex: dia 1º de cada mês)
+  - Configuração de séries de posts
+  - Automatização de conteúdo repetitivo
+
+- **Agendamento em Massa**
+  - Importar múltiplos posts de uma vez
+  - Upload de planilha CSV/Excel
+  - Criar e agendar várias versões rapidamente
+  - Modo batch para criação em lote
+
+- **Calendário Editorial**
+  - Visão de calendário mensal completo
+  - Drag & drop para reorganizar posts
+  - Planejamento visual de conteúdo
+  - Previsão de posts por período
+
+### 9.4. Multi-plataforma
+
+- **Integração com Outras Redes Sociais**
+  - TikTok
+  - LinkedIn
+  - Facebook
+  - Twitter/X
+  - Publicação simultânea ou individual por plataforma
+
+- **Adaptação Automática de Conteúdo**
+  - Ajuste automático de tamanho/formato por plataforma
+  - Otimização de legendas para cada rede
+  - Versões adaptadas mantendo a essência do post
+
+### 9.5. Colaboração e Equipes
+
+- **Gerenciamento de Equipes** (Plano Agência)
+  - Adicionar membros da equipe
+  - Permissões e papéis (admin, editor, visualizador)
+  - Atribuição de posts a membros específicos
+  - Comentários e feedback internos
+
+- **Aprovação de Posts**
+  - Workflow de aprovação
+  - Notificações para revisão
+  - Histórico de alterações e aprovações
+  - Controle de qualidade antes da publicação
+
+### 9.6. Inteligência Avançada
+
+- **A/B Testing de Posts**
+  - Criar múltiplas variações do mesmo post
+  - Testar diferentes legendas/imagens
+  - Publicar variações e comparar performance
+  - Insights sobre qual versão performa melhor
+
+- **Sugestões Inteligentes Baseadas em Sucesso**
+  - IA analisa posts de sucesso do usuário
+  - Sugere temas, estilos e abordagens similares
+  - Aprendizado com histórico de engajamento
+  - Recomendações personalizadas por conta
+
+- **Geração em Lote com Variações**
+  - Criar múltiplos posts a partir de uma ideia
+  - Variações automáticas de texto e imagem
+  - Séries temáticas geradas automaticamente
+  - Economia de tempo para campanhas
+
+### 9.7. Exportação e Integração
+
+- **Exportação Avançada**
+  - Download de posts em alta resolução
+  - Exportação em lote
+  - Formatos: PNG, JPG, PDF
+  - Preparação para impressão (se aplicável)
+
+- **Integração com Ferramentas de Marketing**
+  - Zapier/Make.com
+  - APIs para integrações customizadas
+  - Webhooks para automações externas
+  - Exportação de dados para análise externa
+
+### 9.8. Recursos de Edição Avançados
+
+- **Editor de Imagem Mais Completo**
+  - Ferramentas de design mais avançadas
+  - Camadas e elementos sobrepostos
+  - Animações leves (GIFs)
+  - Efeitos e filtros avançados
+
+- **Editor de Vídeo Básico**
+  - Criação de vídeos curtos
+  - Edição simples (cortes, transições)
+  - Adição de texto e elementos gráficos
+  - Exportação otimizada para redes sociais
+
+### 9.9. Segurança e Backup
+
+- **Backup Automático**
+  - Backup automático de todos os posts
+  - Exportação de dados do usuário
+  - Restauração de versões anteriores
+  - Histórico completo preservado
+
+- **Watermark Personalizado**
+  - Adicionar marca d'água automática
+  - Configuração de posição e opacidade
+  - Proteção de conteúdo (opcional)
+
+### 9.10. Personalização e Automação
+
+- **Modo Noturno para Criação**
+  - Sugestões baseadas em horário do dia
+  - Temas de posts sazonais automáticos
+  - Conteúdo relevante para datas especiais
+
+- **Automações Personalizadas**
+  - Regras customizadas para criação
+  - Gatilhos automáticos (ex: novo produto = criar post)
+  - Integração com calendário de eventos
+  - Automação de workflows de conteúdo
+
+---
+
+**Nota:** Estas funcionalidades são planejadas para versões futuras e serão priorizadas baseadas em feedback dos usuários, métricas de uso e necessidades do mercado. A implementação seguirá os princípios do produto: simplicidade, facilidade de uso e foco na experiência do usuário.

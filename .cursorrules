@@ -1,0 +1,322 @@
+# REGRAS DE DESENVOLVIMENTO - INSTA POST
+
+Este documento contém instruções e princípios que devem ser seguidos SEMPRE durante o desenvolvimento do projeto Insta Post. Baseado em Clean Code, princípios de Martin Fowler e melhores práticas de desenvolvimento de software.
+
+---
+
+## 🎯 OBJETIVO
+
+Garantir que todo código produzido seja:
+- **Limpo e legível**
+- **Manutenível e escalável**
+- **Bem estruturado**
+- **Testável**
+- **Seguindo padrões estabelecidos**
+
+---
+
+## 📚 PRINCÍPIOS FUNDAMENTAIS
+
+### SOLID
+
+1. **S - Single Responsibility Principle (SRP)**
+   - Cada classe/função deve ter uma única razão para mudar
+   - Uma classe deve fazer apenas uma coisa e fazer bem
+   - Se uma função faz mais de uma coisa, quebrar em funções menores
+
+2. **O - Open/Closed Principle (OCP)**
+   - Classes devem estar abertas para extensão, fechadas para modificação
+   - Use interfaces e abstrações para permitir extensão sem modificar código existente
+
+3. **L - Liskov Substitution Principle (LSP)**
+   - Objetos de uma superclasse devem ser substituíveis por objetos de suas subclasses
+   - Mantenha contratos consistentes
+
+4. **I - Interface Segregation Principle (ISP)**
+   - Muitas interfaces específicas são melhores que uma interface geral
+   - Clientes não devem depender de métodos que não usam
+
+5. **D - Dependency Inversion Principle (DIP)**
+   - Dependa de abstrações, não de concretizações
+   - Módulos de alto nível não devem depender de módulos de baixo nível
+
+### Outros Princípios Essenciais
+
+- **D.R.Y. (Don't Repeat Yourself)**: Elimine duplicação de código
+- **K.I.S.S. (Keep It Simple, Stupid)**: A solução mais simples é geralmente a melhor
+- **Y.A.G.N.I. (You Aren't Gonna Need It)**: Não implemente funcionalidades que não são necessárias agora
+- **Separation of Concerns**: Separe responsabilidades claramente
+
+---
+
+## 🏗️ ARQUITETURA E ORGANIZAÇÃO
+
+### Estrutura de Pastas (Feature-Based)
+
+```
+src/
+├── features/
+│   ├── auth/
+│   │   ├── domain/          # Entidades, tipos, regras de negócio
+│   │   ├── application/     # Casos de uso, serviços
+│   │   ├── infrastructure/  # Implementações (repositórios, APIs externas)
+│   │   └── presentation/    # Controllers, DTOs, validações
+│   ├── posts/
+│   │   ├── domain/
+│   │   ├── application/
+│   │   ├── infrastructure/
+│   │   └── presentation/
+│   └── subscriptions/
+│       └── ...
+├── shared/
+│   ├── types/               # Tipos compartilhados
+│   ├── utils/               # Utilitários genéricos
+│   ├── errors/              # Erros customizados
+│   └── constants/           # Constantes
+└── lib/                     # Bibliotecas/configurações externas
+```
+
+### Camadas (Clean Architecture)
+
+1. **Domain Layer (Núcleo)**
+   - Entidades de negócio
+   - Regras de negócio puras
+   - Interfaces de repositórios
+   - **NÃO depende de nada externo**
+
+2. **Application Layer (Casos de Uso)**
+   - Orquestra a lógica de negócio
+   - Define interfaces de serviços
+   - Depende apenas do Domain
+
+3. **Infrastructure Layer (Implementações)**
+   - Implementações de repositórios
+   - Integrações com APIs externas
+   - Acesso a banco de dados
+   - Depende de Application e Domain
+
+4. **Presentation Layer (Interface)**
+   - Controllers/Endpoints
+   - DTOs
+   - Validações de entrada
+   - Depende de Application
+
+---
+
+## 📝 CONVENÇÕES DE CÓDIGO
+
+### Nomenclatura
+
+- **Classes**: PascalCase (`UserService`, `PostRepository`)
+- **Funções/Métodos**: camelCase (`createPost`, `calculateCredits`)
+- **Constantes**: UPPER_SNAKE_CASE (`MAX_RETRY_ATTEMPTS`, `DEFAULT_PAGE_SIZE`)
+- **Interfaces/Types**: PascalCase com prefixo `I` opcional (`IUserRepository`, `PostDTO`)
+- **Arquivos**: kebab-case (`user-service.ts`, `post-repository.ts`)
+- **Variáveis privadas**: Preferir TypeScript `private` em vez de `_` prefix
+
+### Funções e Métodos
+
+**Regras:**
+- Funções devem ser pequenas (idealmente < 20 linhas)
+- Um nível de abstração por função
+- Nomes descritivos que revelam intenção
+- No máximo 3-4 parâmetros (preferir objetos para mais parâmetros)
+- Sem efeitos colaterais inesperados
+- Retornar valores específicos, não `any`
+
+### Classes
+
+**Regras:**
+- Uma responsabilidade por classe
+- Pequenas (quanto menor, melhor)
+- Coesão alta (métodos relacionados)
+- Acoplamento baixo (poucas dependências)
+- Use injeção de dependência
+
+### Tipos e Interfaces
+
+**Regras:**
+- Evite `any` - use tipos específicos ou `unknown`
+- Prefira interfaces para objetos
+- Use types para unions, intersections, primitives
+- Validação de tipos em runtime com Zod (na camada de apresentação)
+
+---
+
+## 🔄 REFACTORING (Martin Fowler)
+
+### Code Smells Comuns - Identificar e Corrigir
+
+1. **Long Method** - Quebrar em métodos menores
+2. **Large Class** - Dividir responsabilidades
+3. **Duplicated Code** - Extrair para função/comum
+4. **Long Parameter List** - Usar objetos de parâmetros
+5. **Feature Envy** - Mover método para classe apropriada
+6. **Data Clumps** - Agrupar dados relacionados em objetos
+7. **Primitive Obsession** - Substituir primitivos por Value Objects quando fizer sentido
+
+### Refactorings Frequentes
+
+- Extract Method, Extract Class, Extract Variable
+- Rename, Move Method/Field
+- Replace Magic Number/String
+- Introduce Parameter Object
+- Replace Conditional with Polymorphism (quando apropriado)
+
+---
+
+## 🧪 TESTES
+
+### Estratégia
+
+1. **Unit Tests** - Funções/métodos isoladamente com mocks
+2. **Integration Tests** - Integrações entre camadas
+3. **E2E Tests** - Fluxos críticos end-to-end (quando necessário)
+
+### Boas Práticas
+
+- Nomes descritivos: `should [ação] when [condição]`
+- Arrange-Act-Assert pattern
+- Um conceito por teste
+- Testes rápidos e independentes
+- Testar comportamento, não implementação
+
+---
+
+## 🛡️ TRATAMENTO DE ERROS
+
+**Regras:**
+- Erros específicos e nomeados
+- Mensagens claras e informativas
+- Hierarquia de erros quando necessário
+- Não engolir erros silenciosamente
+- Tratar erros no nível apropriado
+- Logar erros apropriadamente
+
+---
+
+## 🔌 INJEÇÃO DE DEPENDÊNCIAS
+
+**Regras:**
+- Sempre injetar dependências via constructor
+- Depender de interfaces, não implementações
+- Facilita testes (mocks/stubs)
+- Facilita mudanças futuras
+
+---
+
+## 📦 VALIDAÇÃO E DTOs
+
+**Regras:**
+- Validar na entrada (camada de apresentação)
+- Usar Zod para validação e inferência de tipos
+- DTOs explícitos para entrada/saída
+- Não confiar em dados externos
+
+---
+
+## 🔄 ASSINCRONICIDADE
+
+**Regras:**
+- Prefira async/await sobre Promises encadeadas
+- Use Promise.all para operações paralelas
+- Sempre trate erros
+- Seja explícito com tipos de retorno
+
+---
+
+## 📊 LOGGING
+
+**Regras:**
+- Usar logger estruturado (Winston, Pino)
+- Níveis apropriados (debug, info, warn, error)
+- Contexto útil (IDs, parâmetros relevantes)
+- Não logar informações sensíveis
+- Logs em produção devem ser úteis para debugging
+
+---
+
+## 🎨 COMENTÁRIOS E DOCUMENTAÇÃO
+
+**Regras:**
+- Código deve ser autoexplicativo
+- Comentários devem explicar "por quê", não "o quê"
+- Use JSDoc para funções públicas/complexas
+- Remova código comentado
+- Documente decisões arquiteturais importantes
+
+---
+
+## ⚡ PERFORMANCE
+
+### Princípios
+
+1. **Premature Optimization é ruim** - Otimize apenas quando necessário
+2. **Otimizações Comuns**: Queries eficientes, paginação, cache, Promise.all
+3. **Evitar**: N+1 queries, dados desnecessários, loops aninhados, operações bloqueantes
+
+---
+
+## 🔒 SEGURANÇA
+
+### Princípios
+
+1. **Validação de Input** - Sempre validar, sanitizar, usar Zod
+2. **Autenticação e Autorização** - Verificar em rotas protegidas, RLS no banco
+3. **Dados Sensíveis** - Nunca logar senhas/tokens, usar variáveis de ambiente
+4. **SQL Injection** - Usar Prisma (prevenção automática)
+
+---
+
+## 📐 PADRÕES DE PROJETO (Quando Apropriado)
+
+- **Repository Pattern** - Para acesso a dados
+- **Service Layer Pattern** - Para orquestrar lógica de negócio
+- **Factory Pattern** - Quando necessário para criação de objetos
+
+---
+
+## ✅ CHECKLIST DE REVISÃO
+
+Antes de considerar código completo, verificar:
+
+- [ ] Código segue princípios SOLID?
+- [ ] Funções são pequenas e focadas?
+- [ ] Nomes são descritivos e revelam intenção?
+- [ ] Não há duplicação de código?
+- [ ] Dependências são injetadas?
+- [ ] Tipos são explícitos (sem `any` desnecessário)?
+- [ ] Erros são tratados adequadamente?
+- [ ] Validações estão na camada apropriada?
+- [ ] Logging está adequado?
+- [ ] Código está testado (quando aplicável)?
+- [ ] Comentários explicam "por quê" quando necessário?
+- [ ] Código segue estrutura de pastas estabelecida?
+
+---
+
+## 🎯 RESUMO EXECUTIVO
+
+**Sempre:**
+- Escreva código limpo e legível
+- Prefira código claro e explícito sobre código "esperto"
+- Pequeno é melhor que grande
+- Simples é melhor que complexo
+- Leitura é mais importante que escrita
+
+**Nunca:**
+- Otimize prematuramente
+- Implemente funcionalidades que não são necessárias
+- Comprometa legibilidade por performance (a menos que realmente necessário)
+- Ignore erros silenciosamente
+- Use `any` sem necessidade real
+
+---
+
+**Referências:**
+- Clean Code (Robert C. Martin)
+- Refactoring (Martin Fowler)
+- Patterns of Enterprise Application Architecture (Martin Fowler)
+- Domain-Driven Design (Eric Evans)
+- TypeScript Handbook
+- SOLID Principles
