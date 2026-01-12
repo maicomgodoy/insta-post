@@ -47,6 +47,11 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
 
 ### ✅ O que o MVP faz
 
+- **Internacionalização (i18n)**
+  - Interface disponível em Português, Espanhol e Inglês
+  - Detecção automática do idioma do navegador
+  - Seleção manual de idioma preferido nas Configurações
+  - Preferência de idioma salva no perfil do usuário
 - Gera texto (legenda) usando LLM
 - Gera imagem usando IA
 - Edita imagem criada utilizando IA (modelo próprio via Fal.ai)
@@ -57,7 +62,7 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
 - Exibe histórico de posts
 - Agenda posts para publicação
 - Conexão de conta social (Instagram) nas configurações
-- Possui temas claro e escuro
+- **Temas Light e Dark mode** (alternância fácil via botão no Header)
 - Sistema de assinatura mensal com créditos
   - 4 planos: Starter, Pro, Premium, Agência
   - Cada interação com IA consome créditos (custo específico por modelo)
@@ -99,11 +104,24 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
 
 ### Tema
 
-- Light e Dark mode
+- **Light e Dark mode**
+  - Alternância fácil através de botão no Header/Navbar
+  - Botão visível e acessível em todas as telas
+  - Alternância instantânea com um único clique
+  - Transição suave entre os modos
+  - Preferência salva no perfil do usuário
+  - Preferência mantida entre sessões
 - Cor principal: **Azul (#2563EB)**
 - Azul usado SOMENTE para:
   - Botão principal
   - Item ativo da sidebar
+
+### Internacionalização
+
+- **Idiomas Suportados:** Português, Espanhol, Inglês
+- **Detecção Automática:** Baseada no idioma do navegador
+- **Seleção Manual:** Disponível nas Configurações
+- **Persistência:** Preferência salva no perfil do usuário
 
 ## 🛠 Stack Técnica
 
@@ -154,6 +172,17 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
   - Imagens geradas por IA
   - Zero custo de egress
 
+### Email Transacional e Marketing
+
+- **SendPulse** (recomendado)
+  - 12.000 emails/mês (plano gratuito)
+  - Emails transacionais (welcome, recuperação de senha, notificações)
+  - Emails de marketing/conquista (lead nurturing, conversão)
+  - Automação e sequências de emails
+  - API robusta para integração
+  - Suporte disponível
+  - Para análise detalhada, consulte [`ANALISE-EMAIL-TRANSACIONAL.md`](./docs/ANALISE-EMAIL-TRANSACIONAL.md)
+
 ### Pagamentos e Assinaturas
 
 - **Stripe**
@@ -182,6 +211,8 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
 [OpenRouter / Fal.ai]
         ↓
 [Cloudflare R2 – Imagens]
+        ↓
+[SendPulse – Emails Transacionais]
 ```
 
 ## 🚀 Como Começar
@@ -196,6 +227,7 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
   - OpenRouter
   - Fal.ai
   - Cloudflare R2
+  - SendPulse (email transacional)
   - Stripe (assinaturas e pagamentos)
 
 ### Instalação
@@ -243,7 +275,20 @@ insta-post/
 - ✅ Stack: fechada
 - 🚧 **Próximo passo: implementação real**
 
-## 🚀 Funcionalidades Futuras (V2)
+## 🚀 Funcionalidades Futuras
+
+### V1 (Pós-MVP)
+
+Planejamento de funcionalidades para a versão 1.0 (pós-MVP):
+
+- **Biblioteca de Personagens:** Salvar e reutilizar personagens principais (imagem do usuário, personagens criados, elementos visuais)
+- **Perfis de Estilo Visual:** Criar e aplicar instruções temáticas consistentes (ex: "Desenho", "Estilo Filme", "Quente", "Sobrio")
+- **Agente/Assistente de Dicas:** Chat integrado que fornece dicas personalizadas sobre como e quando postar, baseado no nicho e objetivos do usuário, com opção de salvar instruções para tornar os posts mais acertivos
+- **Integração Completa:** Combinar personagens salvos + perfis de estilo + instruções do agente para criar posts altamente personalizados e estratégicos
+
+Para mais detalhes, consulte [`Especificacoes-Funcionais.md`](./docs/Especificacoes-Funcionais.md) - Seção 8.
+
+### V2 (Futuro)
 
 Planejamento de funcionalidades para versões futuras que agregarão valor e diferenciais competitivos:
 
@@ -255,7 +300,7 @@ Planejamento de funcionalidades para versões futuras que agregarão valor e dif
 - **Inteligência Avançada:** A/B testing, sugestões baseadas em sucesso, geração em lote
 - **Editor Avançado:** Ferramentas de design mais completas, editor de vídeo básico
 
-Para mais detalhes, consulte [`Especificacoes-Funcionais.md`](./Especificacoes-Funcionais.md) - Seção 9.
+Para mais detalhes, consulte [`Especificacoes-Funcionais.md`](./docs/Especificacoes-Funcionais.md) - Seção 9.
 
 ## 📝 Decisões Importantes
 
@@ -278,10 +323,10 @@ Este projeto segue os princípios:
 
 ## 📄 Documentação Adicional
 
-- **[Sistema.md](../Sistema.md)** - Fonte única de verdade para decisões técnicas
-- **[Especificacoes-Funcionais.md](./Especificacoes-Funcionais.md)** - Detalhes funcionais e fluxos
-- **[TODO-DESENVOLVIMENTO.md](./TODO-DESENVOLVIMENTO.md)** - Lista de tarefas para desenvolvimento
-- **[INSTRUCOES-DESENVOLVIMENTO.md](./INSTRUCOES-DESENVOLVIMENTO.md)** - Princípios e padrões de código (Clean Code, Martin Fowler)
+- **[Especificacoes-Funcionais.md](./docs/Especificacoes-Funcionais.md)** - Detalhes funcionais e fluxos
+- **[TODO-DESENVOLVIMENTO.md](./docs/TODO-DESENVOLVIMENTO.md)** - Lista de tarefas para desenvolvimento
+- **[INSTRUCOES-DESENVOLVIMENTO.md](./docs/INSTRUCOES-DESENVOLVIMENTO.md)** - Princípios e padrões de código (Clean Code, Martin Fowler)
+- **[ANALISE-EMAIL-TRANSACIONAL.md](./docs/ANALISE-EMAIL-TRANSACIONAL.md)** - Análise comparativa de fornecedores de email transacional
 
 ## 📄 Licença
 

@@ -18,8 +18,11 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 
 **Processo:**
 - Sistema recebe a ideia do usuário
+- Usuário pode selecionar (opcional, V1):
+  - Personagem da biblioteca para incluir na imagem
+  - Perfil de estilo visual para aplicar
 - Dispara geração assíncrona de:
-  - **Imagem** usando IA (Fal.ai)
+  - **Imagem** usando IA (Fal.ai) - com contexto de personagem e estilo (se selecionados)
   - **Legenda** usando LLM (OpenRouter)
 - Processamento não bloqueia a UI
 - Post inicial é criado e salvo no histórico
@@ -87,6 +90,8 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 
 **Funcionalidade Principal:**
 - Conexão de conta(s) social(is) (Instagram)
+- Seleção de idioma preferido
+- Alternância de tema (Light/Dark mode) - também disponível via botão no Header
 
 **Processo:**
 - Login OAuth com a plataforma Instagram
@@ -94,12 +99,19 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 - Armazenamento seguro das credenciais/tokens
 - Status de conexão visível na tela
 - **Plano Agência:** Possibilidade de conectar múltiplas contas
+- Seleção de idioma (Português, Espanhol, Inglês)
+- Preferência de idioma é salva no perfil do usuário
+- Alternância de tema (Light/Dark mode)
+- Preferência de tema é salva no perfil do usuário
 
 **Uso:**
 - Posts gerados são vinculados à conta conectada selecionada
 - Publicação/agendamento usa a conta configurada
 - Possibilidade de desconectar/reconectar
 - **Plano Agência:** Gerenciar múltiplas contas, selecionar qual conta usar para cada post
+- Idioma selecionado é aplicado imediatamente em toda a interface
+- Tema selecionado é aplicado imediatamente em toda a interface
+- Alternância de tema pode ser feita via botão no Header/Navbar em qualquer tela
 
 ---
 
@@ -109,11 +121,13 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 - **Objetivo:** Geração inicial do post
 - **Ação principal:** Inserir ideia e gerar
 - **Estado:** Aguardando input do usuário
+- **V1:** Agente de Dicas disponível para consultas sobre estratégia de post
 
 ### 2.2. Editor (Tela de Edição)
 - **Objetivo:** Editar post criado
 - **Ação principal:** Edição manual ou via IA
 - **Estado:** Post carregado, pronto para edição
+- **V1:** Agente de Dicas disponível para consultas sobre melhorias e otimizações
 
 ### 2.3. My Posts (Histórico)
 - **Objetivo:** Visualizar posts criados
@@ -136,6 +150,7 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
   - Filtros para visualizar posts por conta específica
   - Estatísticas consolidadas e por conta
   - Gerenciamento centralizado de todas as contas conectadas
+- **V1:** Agente de Dicas disponível via chat integrado
 
 ### 2.5. Calendário
 - **Objetivo:** Visualizar histórico e agendamentos de posts
@@ -152,6 +167,56 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 - **Objetivo:** Gerenciar conta e integrações
 - **Ação principal:** Conectar conta social
 - **Estado:** Configurações da conta
+- **Funcionalidades:**
+  - Conexão de conta(s) social(is) (Instagram)
+  - Seleção de idioma preferido (Português, Espanhol, Inglês)
+  - Alternância de tema (Light/Dark mode)
+  - Configurações de assinatura e planos
+  - **V1:** Configuração de nicho e objetivos para o Agente de Dicas
+
+---
+
+### 2.7. Internacionalização (i18n)
+- **Idiomas Suportados:**
+  - Português (pt-BR)
+  - Espanhol (es)
+  - Inglês (en)
+- **Detecção Automática:**
+  - Sistema detecta automaticamente o idioma do navegador na primeira visita
+  - Idioma padrão é definido baseado na preferência do navegador
+  - Se idioma do navegador não for suportado, padrão é Inglês
+- **Seleção Manual:**
+  - Usuário pode alterar o idioma preferido nas Configurações
+  - Preferência é salva no perfil do usuário
+  - Alteração é aplicada imediatamente em toda a interface
+- **Persistência:**
+  - Idioma selecionado é armazenado no perfil do usuário
+  - Preferência é mantida entre sessões
+  - Aplicada em todas as telas e componentes da interface
+
+---
+
+### 2.8. Sistema de Tema (Light/Dark Mode)
+- **Modos Disponíveis:**
+  - Light mode (modo claro)
+  - Dark mode (modo escuro)
+- **Alternância:**
+  - Botão de alternância facilmente acessível (geralmente no Header/Navbar)
+  - Alternância é instantânea com um único clique
+  - Ícone visual indica o modo atual
+  - Transição suave entre os modos
+- **Localização do Botão:**
+  - Botão de tema visível no Header/Navbar de todas as telas
+  - Posicionado de forma intuitiva e acessível
+  - Disponível também nas Configurações
+- **Persistência:**
+  - Preferência de tema é armazenada no perfil do usuário
+  - Preferência é mantida entre sessões
+  - Aplicada imediatamente ao carregar a aplicação
+- **Comportamento:**
+  - Alteração é aplicada instantaneamente em toda a interface
+  - Todas as telas e componentes respeitam o tema selecionado
+  - Transição visual suave entre os modos
 
 ---
 
@@ -190,7 +255,8 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 3. Realiza OAuth
 4. Autoriza permissões
 5. Conta conectada com sucesso
-6. Agora pode postar/agendar
+6. Email de confirmação enviado (opcional)
+7. Agora pode postar/agendar
 
 ### 3.5. Agendar Post
 1. Usuário finaliza edição no Editor
@@ -198,7 +264,9 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 3. Seleciona data e hora
 4. Confirma agendamento
 5. Post fica agendado
-6. Sistema publica automaticamente no horário
+6. Email de confirmação de agendamento enviado
+7. Sistema publica automaticamente no horário
+8. Email de confirmação de publicação enviado após publicação
 
 ### 3.6. Visualizar Calendário
 1. Usuário acessa "Calendário"
@@ -358,7 +426,65 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 
 ---
 
-## 7. NOTAS PARA IMPLEMENTAÇÃO
+## 7. SISTEMA DE EMAILS TRANSACIONAIS
+
+### 7.1. Fornecedor de Email
+
+- **Provedor Recomendado:** SendPulse
+  - Plano gratuito: 12.000 emails/mês
+  - Limite: 50 emails/hora
+  - API robusta para integração
+  - Para análise detalhada, consulte [`ANALISE-EMAIL-TRANSACIONAL.md`](./ANALISE-EMAIL-TRANSACIONAL.md)
+
+### 7.2. Emails Transacionais do Sistema
+
+- **Emails de Autenticação:**
+  - Welcome email (após confirmação de cadastro)
+  - Confirmação de cadastro (link de verificação)
+  - Recuperação de senha (link seguro com expiração)
+  - Verificação de email
+  - Notificação de login suspeito
+
+- **Emails de Notificações:**
+  - Post agendado com sucesso
+  - Post publicado com sucesso
+  - Falha na publicação de post
+  - Créditos baixos (alerta quando < 20%)
+  - Plano próximo ao vencimento (7, 3, 1 dia antes)
+  - Assinatura ativada
+  - Assinatura cancelada
+  - Assinatura expirada
+
+- **Emails de Sistema:**
+  - Manutenção programada
+  - Atualizações de funcionalidades
+  - Alterações de segurança
+
+- **Emails de Marketing/Conquista (Lead Nurturing):**
+  - Email de boas-vindas ao período de teste (após cadastro)
+  - Email educativo (dia 2-3 do teste): funcionalidades e casos de uso
+  - Lembrete do período grátis (dia 7): meio do período
+  - Email de conversão (dia 12): 2 dias antes do término
+  - Email final de conversão (dia 14): último dia do período grátis
+  - Email de win-back (após término do teste): sequência de reengajamento
+  - Email para leads inativos: cadastrados mas não usaram a plataforma
+  - Email de oferta especial: promoções estratégicas para conversão
+
+### 7.3. Requisitos Técnicos
+
+- Integração via API (SendPulse)
+- Templates HTML responsivos
+- Suporte a múltiplos idiomas (pt-BR, es, en)
+- Configuração de SPF/DKIM para deliverability
+- Sistema de fila para envio assíncrono (opcional)
+- Logs de envio para debug
+- **Automação/Sequências** para emails de marketing (lead nurturing)
+- **Segmentação** de usuários (cadastrados, período grátis, inativos, não convertidos)
+- **Sistema de triggers** baseado em eventos (cadastro, dias no período grátis, término do teste)
+
+---
+
+## 8. NOTAS PARA IMPLEMENTAÇÃO
 
 - Todas as operações de IA devem ser assíncronas (Trigger.dev)
 - UI deve sempre mostrar feedback de carregamento
@@ -367,14 +493,163 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 - Cache de preview para melhor performance
 - Reutilização de post: Sistema deve enviar dados do post original (imagem + legenda) + novas instruções para a IA analisar e gerar novo post
 - Na reutilização, a IA deve entender o contexto do post original e aplicar as novas instruções mantendo a essência (quando usar como base) ou evoluindo (quando dar continuidade)
+- **V1 (Pós-MVP):** Biblioteca de personagens e perfis de estilo devem ser integrados no processo de geração de imagem, enviando contexto adicional (referência de personagem + instruções temáticas do perfil) para a IA
+- **Emails:** Implementar camada de abstração (EmailService) para facilitar migração futura entre provedores
 
 ---
 
-## 8. PRÓXIMOS PASSOS
+## 8. FUNCIONALIDADES V1 (PÓS-MVP)
 
-Este documento será atualizado conforme novas instruções e detalhes forem fornecidos.
+Funcionalidades planejadas para a versão 1.0 (pós-MVP) que aprimorarão a experiência do usuário e a consistência visual dos posts.
 
-**Status:** Em desenvolvimento - aguardando mais instruções
+### 8.1. Biblioteca de Personagens e Elementos Visuais
+
+- **Objetivo:** Permitir que usuários salvem e reutilizem personagens e elementos visuais principais em seus posts
+
+- **Funcionalidades:**
+
+  - **Salvar Personagens:**
+    - Upload de imagem do próprio usuário
+    - Personagens criados através de IA
+    - Qualquer elemento visual que o usuário deseje reutilizar (objetos, animais, produtos, etc.)
+    - Nomear e categorizar personagens salvos
+    - Preview visual na biblioteca
+
+  - **Gerenciamento de Biblioteca:**
+    - Biblioteca pessoal de personagens/elementos salvos
+    - Organização por categorias (ex: personagens principais, objetos, animais, produtos)
+    - Busca e filtros na biblioteca
+    - Edição de nome e categoria
+    - Exclusão de personagens/elementos não utilizados
+
+  - **Reutilização na Criação:**
+    - Seleção de personagem/elemento da biblioteca durante a criação do post
+    - Referência automática ao personagem na geração de imagem
+    - IA utiliza o personagem salvo como base/contexto para a nova imagem
+    - Manutenção da identidade visual entre posts
+
+  - **Limites e Armazenamento:**
+    - Limite de personagens salvos por plano (a definir)
+    - Armazenamento de imagens no Cloudflare R2
+    - Otimização de imagens para economia de espaço
+
+---
+
+### 8.2. Instruções Temáticas e Estilos Visuais
+
+- **Objetivo:** Permitir que usuários definam e apliquem instruções temáticas consistentes para manter um estilo visual uniforme em seus posts
+
+- **Funcionalidades:**
+
+  - **Criar Perfis de Estilo:**
+    - Definir perfis de estilo visual (ex: "Desenho", "Estilo Filme", "Quente", "Sobrio", "Minimalista", "Colorido", etc.)
+    - Nomear e descrever cada perfil de estilo
+    - Criar múltiplos perfis de estilo para diferentes tipos de conteúdo
+
+  - **Instruções Temáticas:**
+    - Campo de texto para instruções temáticas detalhadas
+    - Exemplos de instruções:
+      - "Desenho: estilo cartoon, cores vibrantes, traços definidos"
+      - "Estilo Filme: cinematográfico, cores saturadas, iluminação dramática"
+      - "Quente: cores quentes (vermelho, laranja, amarelo), atmosfera vibrante"
+      - "Sobrio: cores neutras (cinza, bege, preto), estilo elegante e minimalista"
+    - Salvar instruções como templates reutilizáveis
+
+  - **Aplicação Automática:**
+    - Seleção de perfil de estilo durante a criação do post
+    - Instruções temáticas são automaticamente incluídas na geração de imagem
+    - IA aplica o estilo definido consistentemente
+    - Possibilidade de combinar personagem da biblioteca + perfil de estilo
+
+  - **Gerenciamento:**
+    - Biblioteca de perfis de estilo salvos
+    - Editar, duplicar e excluir perfis
+    - Definir perfil padrão para criação de posts
+    - Aplicação rápida de perfil favorito
+
+  - **Consistência Visual:**
+    - Manutenção de identidade visual entre posts usando o mesmo perfil
+    - Facilita criação de séries temáticas
+    - Brand consistency para empresas/marcas
+
+---
+
+### 8.3. Agente/Assistente de Dicas (Chat de Aconselhamento)
+
+- **Objetivo:** Fornecer dicas personalizadas sobre como e quando postar, baseadas no nicho, objetivos e contexto do usuário
+
+- **Funcionalidades:**
+
+  - **Interface de Chat:**
+    - Chat simples e intuitivo integrado ao sistema
+    - Disponível em todas as telas principais (Create Post, Editor, Dashboard)
+    - Botão flutuante ou painel lateral para acesso rápido
+    - Histórico de conversa mantido durante a sessão
+
+  - **Dicas Contextuais:**
+    - **Dicas de Como Postar:**
+      - Sugestões de conteúdo baseadas no nicho
+      - Recomendações de estilo visual
+      - Dicas de composição e elementos visuais
+      - Sugestões de tom e abordagem de texto
+      - Exemplos de posts que funcionam bem no nicho
+    
+    - **Dicas de Quando Postar:**
+      - Horários ideais para o nicho
+      - Dias da semana mais eficazes
+      - Frequência recomendada de posts
+      - Análise de quando o público está mais ativo
+    
+    - **Dicas Baseadas no Objetivo:**
+      - Venda: abordagem mais comercial, CTAs claros
+      - Engajamento: conteúdo mais interativo, perguntas
+      - Branding: consistência visual, identidade de marca
+      - Educação: conteúdo informativo, didático
+      - Entretenimento: conteúdo leve, divertido
+
+  - **Personalização:**
+    - Configuração de nicho do usuário
+    - Definição de objetivos principais (venda, engajamento, branding, etc.)
+    - Contexto do post atual (tema, objetivo específico)
+    - Análise de histórico de posts do usuário (quando disponível)
+
+  - **Salvamento de Instruções:**
+    - Opção de salvar instruções/dicas recebidas
+    - Instruções salvas podem ser aplicadas automaticamente na geração
+    - Biblioteca de instruções salvas para reutilização
+    - Integração com perfis de estilo e biblioteca de personagens
+    - Instruções salvas tornam a geração mais acertiva e personalizada
+
+  - **Integração com Geração:**
+    - Instruções salvas podem ser incluídas automaticamente no prompt de geração
+    - Combinação de dicas do agente + perfil de estilo + personagem
+    - Resultado: Posts mais alinhados com estratégia e objetivos
+    - Feedback loop: IA aprende com instruções salvas e histórico
+
+  - **Tipos de Dicas:**
+    - **Estratégicas:** Quando postar, frequência, horários ideais
+    - **Criativas:** Estilo visual, tom, abordagem de conteúdo
+    - **Técnicas:** Composição, elementos visuais, formato
+    - **Conteúdo:** Temas, assuntos, hashtags sugeridas
+    - **Performance:** (V2) Baseadas em dados de engajamento
+
+---
+
+### 8.4. Integração: Biblioteca + Perfis de Estilo + Agente de Dicas
+
+- **Workflow Integrado:**
+  - Usuário consulta agente de dicas sobre estratégia de post
+  - Agente sugere perfil de estilo apropriado e/ou personagem
+  - Usuário salva instruções relevantes do agente
+  - Sistema combina: personagem + perfil de estilo + instruções salvas do agente
+  - Resultado: Post altamente personalizado e estratégico
+
+- **Exemplos de Uso:**
+  - **Consultor:** Pergunta ao agente "Como criar posts para nicho de negócios?", agente sugere perfil "Sobrio", instruções de tom profissional, usuário salva e aplica automaticamente
+  
+  - **Influencer de Fitness:** Consulta dicas sobre horários ideais, agente sugere perfil "Quente", personagem (foto do usuário), e instruções de conteúdo motivacional, tudo salvo e aplicado
+  
+  - **Marca de Moda:** Agente sugere consistência visual, perfil "Estilo Filme", personagem (mascote), e instruções de storytelling de marca, criando identidade visual forte
 
 ---
 
