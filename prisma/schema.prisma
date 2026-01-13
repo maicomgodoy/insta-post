@@ -1,0 +1,144 @@
+// Prisma Schema para Insta Post
+// Conecta com Supabase PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// TABELAS PRINCIPAIS
+// ============================================
+
+// Tabela de Usuários (extende auth.users do Supabase)
+// Usamos o ID do Supabase Auth como chave primária
+model User {
+  id            String    @id // ID do Supabase Auth
+  email         String    @unique
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  subscription  Subscription?
+  credits       Credit[]
+  posts         Post[]
+  socialAccounts SocialAccount[]
+  
+  @@map("users")
+}
+
+// Tabela de Planos
+model Plan {
+  id              String   @id @default(uuid())
+  name            String   // "starter", "pro", "premium", "agency"
+  displayName     String   @map("display_name") // "Starter", "Pro", "Premium", "Agência"
+  monthlyCredits  Int      @map("monthly_credits")
+  allowsScheduling Boolean @default(false) @map("allows_scheduling")
+  maxScheduledPosts Int?   @map("max_scheduled_posts") // null = ilimitado
+  allowsMultipleAccounts Boolean @default(false) @map("allows_multiple_accounts")
+  stripePriceId  String?  @map("stripe_price_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  subscriptions   Subscription[]
+  
+  @@map("plans")
+}
+
+// Tabela de Assinaturas
+model Subscription {
+  id              String   @id @default(uuid())
+  userId          String   @unique @map("user_id")
+  planId          String   @map("plan_id")
+  stripeCustomerId String? @map("stripe_customer_id")
+  stripeSubscriptionId String? @map("stripe_subscription_id")
+  status          String   // "active", "canceled", "past_due", "trialing"
+  trialEndsAt     DateTime? @map("trial_ends_at") // Data de término do período grátis (14 dias)
+  currentPeriodStart DateTime? @map("current_period_start")
+  currentPeriodEnd   DateTime? @map("current_period_end")
+  canceledAt     DateTime? @map("canceled_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan            Plan     @relation(fields: [planId], references: [id])
+  
+  @@map("subscriptions")
+}
+
+// Tabela de Créditos
+model Credit {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  amount          Int      // Quantidade de créditos
+  type            String   // "monthly_renewal", "purchase", "bonus", "usage"
+  description     String?  // Descrição da transação
+  createdAt       DateTime @default(now()) @map("created_at")
+  
+  // Relacionamentos
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@map("credits")
+}
+
+// Tabela de Posts
+model Post {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  socialAccountId String?  @map("social_account_id") // null se não foi publicado
+  imageUrl        String   @map("image_url") // URL da imagem no Cloudflare R2
+  caption         String   // Legenda do post
+  status          String   @default("draft") // "draft", "scheduled", "published", "failed"
+  publishedAt     DateTime? @map("published_at") // Quando foi publicado
+  scheduledFor    DateTime? @map("scheduled_for") // Quando está agendado para publicar
+  instagramPostId String?  @map("instagram_post_id") // ID do post no Instagram (se publicado)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  socialAccount   SocialAccount? @relation(fields: [socialAccountId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([status])
+  @@index([scheduledFor])
+  @@map("posts")
+}
+
+// Tabela de Contas Sociais Conectadas
+model SocialAccount {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  platform        String   @default("instagram") // "instagram", "facebook", etc.
+  accountId       String   @map("account_id") // ID da conta na plataforma
+  accountUsername String   @map("account_username") // Nome de usuário
+  accessToken     String   @map("access_token") // Token de acesso (criptografado)
+  refreshToken    String?  @map("refresh_token") // Token de refresh (criptografado)
+  tokenExpiresAt  DateTime? @map("token_expires_at")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts           Post[]
+  
+  @@unique([userId, accountId])
+  @@index([userId])
+  @@map("social_accounts")
+}
+
+// Nota: Posts agendados são gerenciados através do campo scheduledFor na tabela Post
+
+// ============================================
+// ÍNDICES E OTIMIZAÇÕES
+// ============================================
+
+// Índices já adicionados nas tabelas acima para performance

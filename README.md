@@ -157,9 +157,10 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
 
 ### Serviços de IA
 
-- **OpenRouter** (texto)
-  - Permite trocar modelos (GPT, Gemini, etc.)
-  - Reduz lock-in
+- **Modelo LLM** (texto)
+  - Inicialmente configurado com OpenAI
+  - No futuro: retry automático com outros modelos (GPT, Gemini, etc.) em caso de falha
+  - Reduz lock-in e aumenta confiabilidade
 - **Fal.ai** (imagem)
   - Geração de imagem
   - Edição de imagem (modelo próprio)
@@ -208,7 +209,7 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
         ↓
 [Trigger.dev – Jobs]
         ↓
-[OpenRouter / Fal.ai]
+[Modelo LLM / Fal.ai]
         ↓
 [Cloudflare R2 – Imagens]
         ↓
@@ -224,7 +225,7 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
 - Contas/configurações:
   - Supabase (auto-hospedado)
   - Trigger.dev
-  - OpenRouter
+  - OpenAI (modelo LLM)
   - Fal.ai
   - Cloudflare R2
   - SendPulse (email transacional)

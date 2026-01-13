@@ -23,7 +23,7 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
   - Perfil de estilo visual para aplicar
 - Dispara geração assíncrona de:
   - **Imagem** usando IA (Fal.ai) - com contexto de personagem e estilo (se selecionados)
-  - **Legenda** usando LLM (OpenRouter)
+  - **Legenda** usando LLM (inicialmente OpenAI, com retry automático para outros modelos no futuro)
 - Processamento não bloqueia a UI
 - Post inicial é criado e salvo no histórico
 
@@ -334,7 +334,7 @@ Este documento detalha as especificações funcionais, fluxos de usuário, casos
 - Cada plano fornece um número determinado de créditos mensais
 - Créditos são consumidos a cada interação com IA
 - Cada modelo de IA tem custo em créditos específico:
-  - Modelos de texto (OpenRouter): créditos por modelo escolhido
+  - Modelos de texto (LLM): créditos por modelo utilizado (inicialmente OpenAI, com retry para outros modelos)
   - Modelos de imagem (Fal.ai): créditos por modelo/operação
 - Créditos são renovados mensalmente conforme o plano
 - Créditos não utilizados não acumulam (reset mensal)

@@ -63,7 +63,7 @@ Com base em estudos recentes sobre comportamento de usuários do Instagram:
 - Custo estimado: R$ 0,02 a R$ 0,10 por imagem
 - Custo médio assumido para cálculos: **R$ 0,05 por imagem**
 
-**Geração de Legenda (OpenRouter/LLM):**
+**Geração de Legenda (LLM):**
 - Custo estimado: R$ 0,01 a R$ 0,03 por legenda
 - Custo médio assumido: **R$ 0,02 por legenda**
 
