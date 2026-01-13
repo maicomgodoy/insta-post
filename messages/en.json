@@ -1,0 +1,124 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign up",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "createAccount": "Create account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "termsAgree": "By continuing, you agree to our",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "createPost": "Create Post",
+    "myPosts": "My Posts",
+    "credits": "Credits",
+    "settings": "Settings"
+  },
+  "theme": {
+    "light": "Light Mode",
+    "dark": "Dark Mode",
+    "switchToLight": "Switch to Light Mode",
+    "switchToDark": "Switch to Dark Mode"
+  },
+  "createPost": {
+    "title": "Create new post",
+    "subtitle": "Generate image and caption in seconds",
+    "niche": "Niche",
+    "selectNiche": "Select niche",
+    "postType": "Post type",
+    "selectPostType": "Select post type",
+    "toneOfVoice": "Tone of voice",
+    "selectTone": "Select tone",
+    "themeOrIdea": "Theme or idea",
+    "themeOrIdeaPlaceholder": "Describe what you want your post to be about...",
+    "generatePost": "Generate post",
+    "generating": "Generating...",
+    "niches": {
+      "fitness": "Fitness",
+      "food": "Food",
+      "travel": "Travel",
+      "fashion": "Fashion",
+      "technology": "Technology",
+      "business": "Business",
+      "lifestyle": "Lifestyle",
+      "education": "Education"
+    },
+    "postTypes": {
+      "carousel": "Carousel",
+      "single": "Single Image",
+      "quote": "Quote",
+      "tips": "Tips",
+      "before_after": "Before & After",
+      "tutorial": "Tutorial"
+    },
+    "tones": {
+      "professional": "Professional",
+      "casual": "Casual",
+      "humorous": "Humorous",
+      "inspirational": "Inspirational",
+      "educational": "Educational",
+      "promotional": "Promotional"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "recentPosts": "Recent Posts",
+    "creditsRemaining": "Credits Remaining",
+    "postsThisMonth": "Posts this Month",
+    "quickActions": "Quick Actions"
+  },
+  "credits": {
+    "title": "Credits",
+    "available": "Available Credits",
+    "history": "History",
+    "usage": "Usage",
+    "purchase": "Purchase",
+    "monthlyRenewal": "Monthly Renewal",
+    "bonus": "Bonus"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "account": "Account",
+    "subscription": "Subscription",
+    "connectedAccounts": "Connected Accounts"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Connection error. Check your internet.",
+    "unauthorized": "You need to be logged in to access this page.",
+    "notFound": "Page not found.",
+    "insufficientCredits": "Insufficient credits."
+  },
+  "empty": {
+    "noPosts": "No posts yet",
+    "noCredits": "No credits available",
+    "noData": "No data available"
+  }
+}

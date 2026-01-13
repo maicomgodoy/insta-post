@@ -1,0 +1,124 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "submit": "Enviar",
+    "close": "Fechar",
+    "confirm": "Confirmar",
+    "yes": "Sim",
+    "no": "Não",
+    "or": "ou",
+    "and": "e"
+  },
+  "auth": {
+    "login": "Entrar",
+    "signup": "Criar conta",
+    "logout": "Sair",
+    "email": "E-mail",
+    "password": "Senha",
+    "forgotPassword": "Esqueceu a senha?",
+    "createAccount": "Criar conta",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "dontHaveAccount": "Não tem uma conta?",
+    "termsAgree": "Ao continuar, você concorda com nossos",
+    "terms": "Termos de Uso",
+    "privacy": "Política de Privacidade"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "createPost": "Criar Post",
+    "myPosts": "Meus Posts",
+    "credits": "Créditos",
+    "settings": "Configurações"
+  },
+  "theme": {
+    "light": "Modo Claro",
+    "dark": "Modo Escuro",
+    "switchToLight": "Mudar para Modo Claro",
+    "switchToDark": "Mudar para Modo Escuro"
+  },
+  "createPost": {
+    "title": "Criar novo post",
+    "subtitle": "Gere imagem e legenda em segundos",
+    "niche": "Nicho",
+    "selectNiche": "Selecione o nicho",
+    "postType": "Tipo de post",
+    "selectPostType": "Selecione o tipo de post",
+    "toneOfVoice": "Tom de voz",
+    "selectTone": "Selecione o tom",
+    "themeOrIdea": "Tema ou ideia",
+    "themeOrIdeaPlaceholder": "Descreva o que você quer que seu post seja sobre...",
+    "generatePost": "Gerar post",
+    "generating": "Gerando...",
+    "niches": {
+      "fitness": "Fitness",
+      "food": "Comida",
+      "travel": "Viagem",
+      "fashion": "Moda",
+      "technology": "Tecnologia",
+      "business": "Negócios",
+      "lifestyle": "Estilo de Vida",
+      "education": "Educação"
+    },
+    "postTypes": {
+      "carousel": "Carrossel",
+      "single": "Imagem Única",
+      "quote": "Citação",
+      "tips": "Dicas",
+      "before_after": "Antes e Depois",
+      "tutorial": "Tutorial"
+    },
+    "tones": {
+      "professional": "Profissional",
+      "casual": "Casual",
+      "humorous": "Humorístico",
+      "inspirational": "Inspiracional",
+      "educational": "Educativo",
+      "promotional": "Promocional"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bem-vindo",
+    "recentPosts": "Posts Recentes",
+    "creditsRemaining": "Créditos Restantes",
+    "postsThisMonth": "Posts este Mês",
+    "quickActions": "Ações Rápidas"
+  },
+  "credits": {
+    "title": "Créditos",
+    "available": "Créditos Disponíveis",
+    "history": "Histórico",
+    "usage": "Uso",
+    "purchase": "Comprar",
+    "monthlyRenewal": "Renovação Mensal",
+    "bonus": "Bônus"
+  },
+  "settings": {
+    "title": "Configurações",
+    "language": "Idioma",
+    "theme": "Tema",
+    "account": "Conta",
+    "subscription": "Assinatura",
+    "connectedAccounts": "Contas Conectadas"
+  },
+  "errors": {
+    "generic": "Algo deu errado. Tente novamente.",
+    "network": "Erro de conexão. Verifique sua internet.",
+    "unauthorized": "Você precisa estar logado para acessar esta página.",
+    "notFound": "Página não encontrada.",
+    "insufficientCredits": "Créditos insuficientes."
+  },
+  "empty": {
+    "noPosts": "Nenhum post ainda",
+    "noCredits": "Sem créditos disponíveis",
+    "noData": "Nenhum dado disponível"
+  }
+}

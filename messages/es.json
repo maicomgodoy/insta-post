@@ -1,0 +1,124 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "submit": "Enviar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No",
+    "or": "o",
+    "and": "y"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "signup": "Registrarse",
+    "logout": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "createAccount": "Crear cuenta",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "termsAgree": "Al continuar, aceptas nuestros",
+    "terms": "Términos de Servicio",
+    "privacy": "Política de Privacidad"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "createPost": "Crear Post",
+    "myPosts": "Mis Posts",
+    "credits": "Créditos",
+    "settings": "Configuración"
+  },
+  "theme": {
+    "light": "Modo Claro",
+    "dark": "Modo Oscuro",
+    "switchToLight": "Cambiar a Modo Claro",
+    "switchToDark": "Cambiar a Modo Oscuro"
+  },
+  "createPost": {
+    "title": "Crear nuevo post",
+    "subtitle": "Genera imagen y descripción en segundos",
+    "niche": "Nicho",
+    "selectNiche": "Selecciona el nicho",
+    "postType": "Tipo de post",
+    "selectPostType": "Selecciona el tipo de post",
+    "toneOfVoice": "Tono de voz",
+    "selectTone": "Selecciona el tono",
+    "themeOrIdea": "Tema o idea",
+    "themeOrIdeaPlaceholder": "Describe de qué quieres que trate tu post...",
+    "generatePost": "Generar post",
+    "generating": "Generando...",
+    "niches": {
+      "fitness": "Fitness",
+      "food": "Comida",
+      "travel": "Viajes",
+      "fashion": "Moda",
+      "technology": "Tecnología",
+      "business": "Negocios",
+      "lifestyle": "Estilo de Vida",
+      "education": "Educación"
+    },
+    "postTypes": {
+      "carousel": "Carrusel",
+      "single": "Imagen Única",
+      "quote": "Cita",
+      "tips": "Consejos",
+      "before_after": "Antes y Después",
+      "tutorial": "Tutorial"
+    },
+    "tones": {
+      "professional": "Profesional",
+      "casual": "Casual",
+      "humorous": "Humorístico",
+      "inspirational": "Inspiracional",
+      "educational": "Educativo",
+      "promotional": "Promocional"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "welcome": "Bienvenido",
+    "recentPosts": "Posts Recientes",
+    "creditsRemaining": "Créditos Restantes",
+    "postsThisMonth": "Posts este Mes",
+    "quickActions": "Acciones Rápidas"
+  },
+  "credits": {
+    "title": "Créditos",
+    "available": "Créditos Disponibles",
+    "history": "Historial",
+    "usage": "Uso",
+    "purchase": "Comprar",
+    "monthlyRenewal": "Renovación Mensual",
+    "bonus": "Bonus"
+  },
+  "settings": {
+    "title": "Configuración",
+    "language": "Idioma",
+    "theme": "Tema",
+    "account": "Cuenta",
+    "subscription": "Suscripción",
+    "connectedAccounts": "Cuentas Conectadas"
+  },
+  "errors": {
+    "generic": "Algo salió mal. Inténtalo de nuevo.",
+    "network": "Error de conexión. Verifica tu internet.",
+    "unauthorized": "Necesitas iniciar sesión para acceder a esta página.",
+    "notFound": "Página no encontrada.",
+    "insufficientCredits": "Créditos insuficientes."
+  },
+  "empty": {
+    "noPosts": "Sin posts todavía",
+    "noCredits": "Sin créditos disponibles",
+    "noData": "Sin datos disponibles"
+  }
+}

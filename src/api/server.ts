@@ -13,10 +13,26 @@ const PORT = process.env.PORT || 3001
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
 // Middleware básico
-app.use(cors({
-  origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+// CORS: Em desenvolvimento, permitir todas as origens locais
+// Em produção, usar apenas a origem configurada
+const corsOptions = {
+  origin: NODE_ENV === 'production' 
+    ? process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    : (origin, callback) => {
+        // Permitir requisições sem origem (mobile apps, Postman, etc)
+        // e origens locais em desenvolvimento
+        if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+          callback(null, true)
+        } else {
+          callback(null, true) // Em dev, permitir tudo para facilitar testes
+        }
+      },
   credentials: true,
-}))
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}
+
+app.use(cors(corsOptions))
 
 // IMPORTANTE: Webhook do Stripe precisa do raw body para verificação de assinatura
 // Esta rota deve vir ANTES do express.json()

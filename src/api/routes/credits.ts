@@ -1,10 +1,9 @@
-import { Router, Request, Response } from 'express'
+import { Router, Response } from 'express'
 import { z } from 'zod'
 import { creditService } from '../lib/services/credit-service'
 import { authenticate, AuthenticatedRequest } from '../middleware/auth'
 import { validateQuery } from '../middleware/validation'
 import { logger } from '../lib/logger'
-import { ApiError } from '../middleware/error-handler'
 
 const router = Router()
 
@@ -14,6 +13,8 @@ const creditHistoryQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).optional().default(0),
   type: z.enum(['monthly_renewal', 'purchase', 'bonus', 'usage']).optional(),
 })
+
+type CreditHistoryQuery = z.infer<typeof creditHistoryQuerySchema>
 
 /**
  * GET /api/credits/balance
@@ -49,11 +50,10 @@ router.get(
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user!.id
-      const { limit, offset, type } = req.query as {
-        limit: number
-        offset: number
-        type?: 'monthly_renewal' | 'purchase' | 'bonus' | 'usage'
-      }
+      // Parse query parameters with defaults
+      const limit = Number(req.query.limit) || 50
+      const offset = Number(req.query.offset) || 0
+      const type = req.query.type as CreditHistoryQuery['type']
 
       const history = await creditService.getCreditHistory(userId, {
         limit,

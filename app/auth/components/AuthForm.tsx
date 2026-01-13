@@ -1,33 +1,21 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 
 interface AuthFormProps {
   mode: 'login' | 'signup'
 }
 
-interface AuthResponse {
-  message: string
-  user: {
-    id: string
-    email: string
-  }
-  session?: {
-    access_token: string
-    refresh_token: string
-    expires_at: number
-  }
-}
-
 export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const { login, register } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -35,29 +23,19 @@ export default function AuthForm({ mode }: AuthFormProps) {
     setLoading(true)
 
     try {
-      const endpoint = mode === 'signup' ? '/api/auth/register' : '/api/auth/login'
-      const response = await fetch(`${API_URL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || data.message || 'Erro ao autenticar')
+      if (mode === 'signup') {
+        await register(email, password)
+      } else {
+        await login(email, password)
       }
 
-      // Salvar tokens no localStorage (temporário - depois vamos usar cookies httpOnly)
-      if (data.session) {
-        localStorage.setItem('access_token', data.session.access_token)
-        localStorage.setItem('refresh_token', data.session.refresh_token)
-      }
-
-      // Redirecionar para dashboard ou página inicial logada
-      router.push('/dashboard')
+      // Get return URL from query params or default to dashboard
+      const returnUrl = searchParams.get('returnUrl')
+      const redirectPath = returnUrl 
+        ? decodeURIComponent(returnUrl)
+        : '/pt-BR/dashboard'
+      
+      router.push(redirectPath)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao autenticar')
     } finally {
