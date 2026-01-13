@@ -14,7 +14,7 @@ export default function HeroSection() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                href="/signup"
+                href="/auth"
                 className="bg-primary text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary/90 transition-colors text-center"
               >
                 Começar grátis

@@ -12,7 +12,7 @@ export default function CTASection() {
             Comece agora. 14 dias grátis. Sem cartão de crédito.
           </p>
           <Link
-            href="/signup"
+            href="/auth"
             className="inline-block bg-primary text-white px-10 py-5 rounded-lg font-semibold text-lg hover:bg-primary/90 transition-colors"
           >
             Começar grátis
