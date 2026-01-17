@@ -1,8 +1,9 @@
-import { Router, Response } from 'express'
+import { Router, Response, NextFunction } from 'express'
 import { z } from 'zod'
 import { prisma } from '../lib/prisma'
 import { validateBody, validateParams, validateQuery } from '../middleware/validation'
 import { authenticate, AuthenticatedRequest } from '../middleware/auth'
+import { asyncHandler } from '../middleware/async-handler'
 import { logger } from '../lib/logger'
 import { ApiError } from '../middleware/error-handler'
 
@@ -118,9 +119,12 @@ router.get(
   '/',
   authenticate,
   validateQuery(listPostsQuerySchema),
-  async (req: AuthenticatedRequest, res: Response) => {
+  asyncHandler(async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
     const userId = req.user!.id
-    const { status, limit, offset, orderBy, order } = req.query as z.infer<typeof listPostsQuerySchema>
+    // Query já foi validado pelo middleware validateQuery
+    // Usar cast seguro já que sabemos que foi validado
+    const queryParams = req.query as z.infer<typeof listPostsQuerySchema>
+    const { status, limit, offset, orderBy, order } = queryParams
 
     const where = {
       userId,
@@ -139,9 +143,9 @@ router.get(
             },
           },
         },
-        orderBy: { [orderBy || 'createdAt']: order || 'desc' },
-        take: limit || 20,
-        skip: offset || 0,
+        orderBy: { [orderBy]: order },
+        take: limit,
+        skip: offset,
       }),
       prisma.post.count({ where }),
     ])
@@ -161,9 +165,9 @@ router.get(
       })),
       pagination: {
         total,
-        limit: limit || 20,
-        offset: offset || 0,
-        hasMore: (offset || 0) + (limit || 20) < total,
+        limit,
+        offset,
+        hasMore: offset + limit < total,
       },
     })
   }
