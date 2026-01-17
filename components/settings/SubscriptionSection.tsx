@@ -75,7 +75,7 @@ export function SubscriptionSection() {
           setSubscription(subscriptionData.subscription)
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load data')
+        setError(err instanceof globalThis.Error ? err.message : 'Failed to load data')
       } finally {
         setLoading(false)
       }
@@ -129,7 +129,7 @@ export function SubscriptionSection() {
       addToast({
         type: 'error',
         title: 'Error',
-        message: err instanceof Error ? err.message : 'Failed to create checkout',
+        message: err instanceof globalThis.Error ? err.message : 'Failed to create checkout',
       })
     } finally {
       setProcessingPlanId(null)
@@ -187,7 +187,7 @@ export function SubscriptionSection() {
       addToast({
         type: 'error',
         title: 'Error',
-        message: err instanceof Error ? err.message : 'Failed to cancel subscription',
+        message: err instanceof globalThis.Error ? err.message : 'Failed to cancel subscription',
       })
     } finally {
       setCanceling(false)
