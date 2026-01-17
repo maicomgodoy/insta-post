@@ -14,8 +14,6 @@ interface SocialAccount {
   createdAt: string
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-
 export function ConnectedAccountsSection() {
   const t = useTranslations('settings')
   const { addToast } = useToast()
@@ -54,7 +52,7 @@ export function ConnectedAccountsSection() {
   }
 
   // TODO: Implementar quando backend OAuth estiver pronto
-  const handleDisconnect = async (accountId: string) => {
+  const handleDisconnect = async (_accountId: string) => {
     if (!confirm('Tem certeza que deseja desconectar esta conta?')) {
       return
     }

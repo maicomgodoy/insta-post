@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Card, Button, Loading, Error } from '@/components/ui'
-import { useAuth } from '@/hooks/useAuth'
 import { useToast } from '@/components/ui/Toast'
 import { useParams } from 'next/navigation'
 
@@ -32,7 +31,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
 export function SubscriptionSection() {
   const t = useTranslations('settings')
-  const { user } = useAuth()
   const { addToast } = useToast()
   const params = useParams()
   const locale = params.locale as string
@@ -66,7 +64,7 @@ export function SubscriptionSection() {
         ])
 
         if (!plansResponse.ok) {
-          throw new Error('Failed to fetch plans')
+          throw new globalThis.Error('Failed to fetch plans')
         }
 
         const plansData = await plansResponse.json()
@@ -118,7 +116,7 @@ export function SubscriptionSection() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || errorData.message || 'Failed to create checkout')
+        throw new globalThis.Error(errorData.error || errorData.message || 'Failed to create checkout')
       }
 
       const data = await response.json()
@@ -165,7 +163,7 @@ export function SubscriptionSection() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || errorData.message || 'Failed to cancel subscription')
+        throw new globalThis.Error(errorData.error || errorData.message || 'Failed to cancel subscription')
       }
 
       addToast({

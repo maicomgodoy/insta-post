@@ -6,6 +6,8 @@ import { healthRoutes } from './routes/health'
 import { authRoutes } from './routes/auth'
 import { subscriptionRoutes } from './routes/subscriptions'
 import { creditRoutes } from './routes/credits'
+import { postRoutes } from './routes/posts'
+import { socialAccountRoutes } from './routes/social-accounts'
 import { stripeWebhookHandler } from './routes/webhooks/stripe'
 
 const app = express()
@@ -15,10 +17,10 @@ const NODE_ENV = process.env.NODE_ENV || 'development'
 // Middleware básico
 // CORS: Em desenvolvimento, permitir todas as origens locais
 // Em produção, usar apenas a origem configurada
-const corsOptions = {
+const corsOptions: cors.CorsOptions = {
   origin: NODE_ENV === 'production' 
     ? process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    : (origin, callback) => {
+    : (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
         // Permitir requisições sem origem (mobile apps, Postman, etc)
         // e origens locais em desenvolvimento
         if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
@@ -57,6 +59,8 @@ app.use('/api/health', healthRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/subscriptions', subscriptionRoutes)
 app.use('/api/credits', creditRoutes)
+app.use('/api/posts', postRoutes)
+app.use('/api/social-accounts', socialAccountRoutes)
 
 // Error handler (deve ser o último middleware)
 app.use(errorHandler)
