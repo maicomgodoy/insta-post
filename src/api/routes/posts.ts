@@ -122,8 +122,8 @@ router.get(
   asyncHandler(async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
     const userId = req.user!.id
     // Query já foi validado pelo middleware validateQuery
-    // Usar cast seguro já que sabemos que foi validado
-    const queryParams = req.query as z.infer<typeof listPostsQuerySchema>
+    // Usar cast via unknown já que sabemos que foi validado pelo middleware
+    const queryParams = req.query as unknown as z.infer<typeof listPostsQuerySchema>
     const { status, limit, offset, orderBy, order } = queryParams
 
     const where = {
@@ -170,7 +170,7 @@ router.get(
         hasMore: offset + limit < total,
       },
     })
-  }
+  })
 )
 
 /**

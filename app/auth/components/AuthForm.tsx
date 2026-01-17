@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -8,7 +8,7 @@ interface AuthFormProps {
   mode: 'login' | 'signup'
 }
 
-export default function AuthForm({ mode }: AuthFormProps) {
+function AuthFormContent({ mode }: AuthFormProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { login, register } = useAuth()
@@ -94,5 +94,19 @@ export default function AuthForm({ mode }: AuthFormProps) {
           : 'Entrar'}
       </button>
     </form>
+  )
+}
+
+export default function AuthForm({ mode }: AuthFormProps) {
+  return (
+    <Suspense fallback={
+      <div className="space-y-6">
+        <div className="h-12 bg-gray-200 animate-pulse rounded-lg"></div>
+        <div className="h-12 bg-gray-200 animate-pulse rounded-lg"></div>
+        <div className="h-12 bg-gray-200 animate-pulse rounded-lg"></div>
+      </div>
+    }>
+      <AuthFormContent mode={mode} />
+    </Suspense>
   )
 }

@@ -25,6 +25,34 @@ const socialAccountIdParamSchema = z.object({
 })
 
 // ============================================
+// TIPOS PARA API DO INSTAGRAM
+// ============================================
+
+interface InstagramTokenResponse {
+  access_token: string
+  user_id: string | number
+  token_type?: string
+  expires_in?: number
+}
+
+interface InstagramProfileResponse {
+  id: string
+  username: string
+}
+
+interface InstagramLongLivedTokenResponse {
+  access_token: string
+  token_type: string
+  expires_in: number
+}
+
+interface InstagramRefreshTokenResponse {
+  access_token: string
+  token_type: string
+  expires_in: number
+}
+
+// ============================================
 // ENDPOINTS
 // ============================================
 
@@ -209,7 +237,7 @@ router.post(
         throw error
       }
 
-      const tokenData = await tokenResponse.json()
+      const tokenData = await tokenResponse.json() as InstagramTokenResponse
       const { access_token, user_id: instagramUserId } = tokenData
 
       // Obter informações do perfil
@@ -224,7 +252,7 @@ router.post(
         throw error
       }
 
-      const profileData = await profileResponse.json()
+      const profileData = await profileResponse.json() as InstagramProfileResponse
 
       // Obter token de longa duração (60 dias)
       const longLivedTokenResponse = await fetch(
@@ -235,7 +263,7 @@ router.post(
       let tokenExpiresAt: Date | null = null
 
       if (longLivedTokenResponse.ok) {
-        const longLivedData = await longLivedTokenResponse.json()
+        const longLivedData = await longLivedTokenResponse.json() as InstagramLongLivedTokenResponse
         finalAccessToken = longLivedData.access_token
         // Token de longa duração expira em 60 dias
         tokenExpiresAt = new Date(Date.now() + longLivedData.expires_in * 1000)
@@ -347,7 +375,7 @@ router.post(
         throw error
       }
 
-      const refreshData = await refreshResponse.json()
+      const refreshData = await refreshResponse.json() as InstagramRefreshTokenResponse
       const newExpiresAt = new Date(Date.now() + refreshData.expires_in * 1000)
 
       await prisma.socialAccount.update({
