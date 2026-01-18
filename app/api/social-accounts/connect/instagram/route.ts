@@ -38,12 +38,17 @@ export const GET = withAuth(async (request: NextRequest, user) => {
     ].join(',')
     
     // URL de autorização do Facebook (para Instagram Business/Creator accounts)
+    // Nota: Instagram Graph API requer autenticação via Facebook OAuth
+    // pois contas Instagram Business/Creator precisam estar vinculadas a uma Página do Facebook
     const authUrl = new URL('https://www.facebook.com/v21.0/dialog/oauth')
     authUrl.searchParams.set('client_id', clientId)
     authUrl.searchParams.set('redirect_uri', redirectUri)
     authUrl.searchParams.set('state', state)
     authUrl.searchParams.set('scope', scopes)
     authUrl.searchParams.set('response_type', 'code')
+    // Parâmetros para melhorar a experiência do usuário
+    authUrl.searchParams.set('display', 'page') // Exibe em página completa
+    authUrl.searchParams.set('auth_type', 'rerequest') // Solicita permissões novamente se necessário
     
     logger.info('Instagram OAuth initiated', {
       userId: user.id,

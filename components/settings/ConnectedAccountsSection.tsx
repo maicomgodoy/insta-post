@@ -75,6 +75,18 @@ export function ConnectedAccountsSection() {
         return
       }
 
+      // Mostrar mensagem informativa antes de redirecionar
+      const shouldProceed = confirm(
+        'Para conectar sua conta do Instagram, você será redirecionado para autorizar via Facebook.\n\n' +
+        'Isso é necessário porque contas Instagram Business/Creator precisam estar vinculadas a uma Página do Facebook.\n\n' +
+        'Deseja continuar?'
+      )
+
+      if (!shouldProceed) {
+        setConnecting(false)
+        return
+      }
+
       // Obter URL de autorização do backend
       const response = await fetch('/api/social-accounts/connect/instagram', {
         headers: {
@@ -89,8 +101,8 @@ export function ConnectedAccountsSection() {
 
       const data = await response.json()
       
-      // Redirecionar para página de autorização do Instagram
-      // O Instagram redirecionará de volta para o callback configurado
+      // Redirecionar para página de autorização
+      // Nota: Instagram Graph API requer autenticação via Facebook OAuth
       window.location.href = data.authUrl
     } catch (err) {
       addToast({
@@ -175,10 +187,18 @@ export function ConnectedAccountsSection() {
       </div>
 
       {accounts.length === 0 ? (
-        <Empty
-          title="Nenhuma conta conectada"
-          message="Conecte sua conta do Instagram para publicar posts diretamente."
-        />
+        <div className="space-y-4">
+          <Empty
+            title="Nenhuma conta conectada"
+            message="Conecte sua conta do Instagram para publicar posts diretamente."
+          />
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <p className="text-sm text-blue-800 dark:text-blue-200">
+              <strong>ℹ️ Informação importante:</strong> Para conectar sua conta do Instagram, você será redirecionado para autorizar via Facebook. 
+              Isso é necessário porque contas Instagram Business ou Creator precisam estar vinculadas a uma Página do Facebook para usar a API do Instagram.
+            </p>
+          </div>
+        </div>
       ) : (
         <div className="space-y-4">
           {accounts.map((account) => (
