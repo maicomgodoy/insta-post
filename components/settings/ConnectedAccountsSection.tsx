@@ -15,8 +15,6 @@ interface SocialAccount {
   isTokenExpired?: boolean
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-
 export function ConnectedAccountsSection() {
   const t = useTranslations('settings')
   const { addToast } = useToast()
@@ -36,7 +34,7 @@ export function ConnectedAccountsSection() {
         return
       }
 
-      const response = await fetch(`${API_URL}/api/social-accounts`, {
+      const response = await fetch('/api/social-accounts', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -78,7 +76,7 @@ export function ConnectedAccountsSection() {
       }
 
       // Obter URL de autorização do backend
-      const response = await fetch(`${API_URL}/api/social-accounts/connect/instagram`, {
+      const response = await fetch('/api/social-accounts/connect/instagram', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -120,7 +118,7 @@ export function ConnectedAccountsSection() {
         return
       }
 
-      const response = await fetch(`${API_URL}/api/social-accounts/${accountId}`, {
+      const response = await fetch(`/api/social-accounts/${accountId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

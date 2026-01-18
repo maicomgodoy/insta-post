@@ -3,8 +3,6 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-
 type CallbackStatus = 'processing' | 'success' | 'error'
 
 function InstagramCallbackContent() {
@@ -45,7 +43,7 @@ function InstagramCallbackContent() {
 
       try {
         // Enviar código para o backend processar
-        const response = await fetch(`${API_URL}/api/social-accounts/callback/instagram`, {
+        const response = await fetch('/api/social-accounts/callback/instagram', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

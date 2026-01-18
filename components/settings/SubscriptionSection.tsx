@@ -27,8 +27,6 @@ interface Subscription {
   canceledAt: string | null
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-
 export function SubscriptionSection() {
   const t = useTranslations('settings')
   const { addToast } = useToast()
@@ -55,8 +53,8 @@ export function SubscriptionSection() {
 
         // Fetch plans and subscription in parallel
         const [plansResponse, subscriptionResponse] = await Promise.all([
-          fetch(`${API_URL}/api/subscriptions/plans`),
-          fetch(`${API_URL}/api/subscriptions/me`, {
+          fetch('/api/subscriptions/plans'),
+          fetch('/api/subscriptions/me', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -101,7 +99,7 @@ export function SubscriptionSection() {
       const successUrl = `${window.location.origin}/${locale}/settings?checkout=success`
       const cancelUrl = `${window.location.origin}/${locale}/settings?checkout=cancelled`
 
-      const response = await fetch(`${API_URL}/api/subscriptions/checkout`, {
+      const response = await fetch('/api/subscriptions/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -154,7 +152,7 @@ export function SubscriptionSection() {
         return
       }
 
-      const response = await fetch(`${API_URL}/api/subscriptions/cancel`, {
+      const response = await fetch('/api/subscriptions/cancel', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -173,7 +171,7 @@ export function SubscriptionSection() {
       })
 
       // Refresh subscription data
-      const subscriptionResponse = await fetch(`${API_URL}/api/subscriptions/me`, {
+      const subscriptionResponse = await fetch('/api/subscriptions/me', {
         headers: {
           Authorization: `Bearer ${token}`,
         },

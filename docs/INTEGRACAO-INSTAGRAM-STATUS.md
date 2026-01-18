@@ -72,19 +72,43 @@ Para publicar posts no Instagram, você precisa:
 2. **Adicionar o produto "Instagram Graph API"**
    - No painel do app, adicione o produto "Instagram Graph API"
 
-3. **Configurar OAuth Redirect URIs**
-   - Adicione a URL de callback: `http://localhost:3000/auth/callback/instagram` (desenvolvimento)
-   - Adicione a URL de produção quando fizer deploy
+3. **Configurar App Domains (IMPORTANTE - Resolve erro de domínio)**
+   
+   ⚠️ **Este passo é essencial para evitar o erro "The domain of this URL isn't included in the app's domains"**
+   
+   - No painel do app, vá em **Settings** > **Basic**
+   - Na seção **App Domains**, adicione:
+     - Para desenvolvimento: `localhost`
+     - Para produção: seu domínio (ex: `seudominio.com` ou `app.seudominio.com`)
+   - **Importante**: Adicione apenas o domínio base (sem `http://`, `https://` ou porta)
+   - Exemplos corretos:
+     - ✅ `localhost` (para desenvolvimento)
+     - ✅ `meuapp.com` (para produção)
+     - ✅ `app.meuapp.com` (para subdomínios)
+   - Exemplos incorretos:
+     - ❌ `http://localhost:3000`
+     - ❌ `https://meuapp.com`
+     - ❌ `localhost:3000`
 
-4. **Solicitar Permissões**
-   - `instagram_basic` - Acesso básico ao Instagram
-   - `pages_show_list` - Listar páginas do Facebook
-   - `instagram_content_publish` - Publicar conteúdo no Instagram
-   - `pages_read_engagement` - Ler engajamento das páginas
+4. **Configurar OAuth Redirect URIs**
+   - No painel do app, vá em **Products** > **Facebook Login** > **Settings**
+   - Na seção **Valid OAuth Redirect URIs**, adicione:
+     - Para desenvolvimento: `http://localhost:3000/auth/callback/instagram`
+     - Para produção: `https://seudominio.com/auth/callback/instagram`
+   - **Importante**: Adicione a URL completa com protocolo, porta (se aplicável) e caminho
+   - Clique em **Save Changes**
 
-5. **Revisão do App (App Review)**
+5. **Solicitar Permissões**
+   - No painel do app, vá em **Products** > **Instagram Graph API** > **Permissions and Features**
+   - Solicite as seguintes permissões:
+     - `instagram_basic` - Acesso básico ao Instagram
+     - `pages_show_list` - Listar páginas do Facebook
+     - `instagram_content_publish` - Publicar conteúdo no Instagram
+     - `pages_read_engagement` - Ler engajamento das páginas
+
+6. **Revisão do App (App Review)**
    - Para usar em produção, você precisa enviar o app para revisão do Facebook
-   - Em modo de desenvolvimento, funciona apenas com contas de teste
+   - Em modo de desenvolvimento, funciona apenas com contas de teste adicionadas no painel
 
 ### 3. Requisitos da Conta do Instagram
 
@@ -152,6 +176,19 @@ A Instagram Graph API tem algumas limitações:
 
 ### Troubleshooting
 
+**Erro: "The domain of this URL isn't included in the app's domains"**
+- ⚠️ **Este é o erro mais comum ao conectar Instagram**
+- **Solução**: Configure o **App Domains** no Facebook Developer Console
+  1. Acesse seu app no Facebook Developer: https://developers.facebook.com/apps/
+  2. Vá em **Settings** > **Basic**
+  3. Na seção **App Domains**, adicione:
+     - Para desenvolvimento: `localhost`
+     - Para produção: seu domínio (ex: `seudominio.com`)
+  4. **Importante**: Adicione apenas o domínio base, sem protocolo, porta ou caminho
+  5. Clique em **Save Changes**
+  6. Aguarde alguns minutos para as mudanças serem propagadas
+  7. Tente conectar novamente
+
 **Erro: "Token expirado"**
 - Reconecte a conta do Instagram nas configurações
 
@@ -163,6 +200,10 @@ A Instagram Graph API tem algumas limitações:
 - Verifique se a URL da imagem é acessível publicamente
 - Verifique se a legenda não excede 2200 caracteres
 - Verifique se o token ainda é válido
+
+**Erro: "Invalid OAuth Redirect URI"**
+- Verifique se a URL no campo **Valid OAuth Redirect URIs** está exatamente igual à variável `INSTAGRAM_REDIRECT_URI` no seu `.env`
+- A URL deve incluir protocolo (`http://` ou `https://`), porta (se aplicável) e caminho completo
 
 ---
 

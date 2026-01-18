@@ -8,8 +8,6 @@ export default function DashboardPage() {
   const [user, setUser] = useState<{ id: string; email: string } | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('access_token')
@@ -20,7 +18,7 @@ export default function DashboardPage() {
       }
 
       try {
-        const response = await fetch(`${API_URL}/api/auth/me`, {
+        const response = await fetch('/api/auth/me', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -44,7 +42,7 @@ export default function DashboardPage() {
     }
 
     checkAuth()
-  }, [router, API_URL])
+  }, [router])
 
   const handleLogout = () => {
     localStorage.removeItem('access_token')

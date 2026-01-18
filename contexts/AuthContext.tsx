@@ -27,7 +27,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 const TOKEN_KEY = 'access_token'
 const REFRESH_TOKEN_KEY = 'refresh_token'
 
@@ -68,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!token) return null
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/me`, {
+      const response = await fetch('/api/auth/me', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -84,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               // Retry with new token
               const newToken = getToken()
               if (newToken) {
-                const retryResponse = await fetch(`${API_URL}/api/auth/me`, {
+                const retryResponse = await fetch('/api/auth/me', {
                   headers: {
                     Authorization: `Bearer ${newToken}`,
                   },
@@ -112,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Refresh access token
   const refreshAccessToken = async (refreshToken: string): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/refresh`, {
+      const response = await fetch('/api/auth/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -154,55 +153,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Login
   const login = async (email: string, password: string) => {
-    const response = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
-    if (!response.ok) {
-      let errorMessage = 'Erro ao fazer login'
-      try {
-        const errorData = await response.json()
-        errorMessage = errorData.error || errorData.message || errorMessage
-      } catch {
-        errorMessage = response.statusText || `Erro ${response.status}`
+      if (!response.ok) {
+        let errorMessage = 'Erro ao fazer login'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorData.message || errorMessage
+        } catch {
+          errorMessage = response.statusText || `Erro ${response.status}`
+        }
+        throw new Error(errorMessage)
       }
-      throw new Error(errorMessage)
-    }
 
-    const data = await response.json()
-    setTokens(data.session)
-    setUser(data.user)
+      const data = await response.json()
+      setTokens(data.session)
+      setUser(data.user)
+    } catch (error) {
+      // Se for erro de rede (fail to fetch), dar mensagem mais clara
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Não foi possível conectar ao servidor. Tente novamente.')
+      }
+      throw error
+    }
   }
 
   // Register
   const register = async (email: string, password: string) => {
-    const response = await fetch(`${API_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
-    if (!response.ok) {
-      let errorMessage = 'Erro ao criar conta'
-      try {
-        const errorData = await response.json()
-        errorMessage = errorData.error || errorData.message || errorMessage
-      } catch {
-        errorMessage = response.statusText || `Erro ${response.status}`
+      if (!response.ok) {
+        let errorMessage = 'Erro ao criar conta'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorData.message || errorMessage
+        } catch {
+          errorMessage = response.statusText || `Erro ${response.status}`
+        }
+        throw new Error(errorMessage)
       }
-      throw new Error(errorMessage)
-    }
 
-    const data = await response.json()
-    if (data.session) {
-      setTokens(data.session)
-      setUser(data.user)
+      const data = await response.json()
+      if (data.session) {
+        setTokens(data.session)
+        setUser(data.user)
+      }
+    } catch (error) {
+      // Se for erro de rede (fail to fetch), dar mensagem mais clara
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Não foi possível conectar ao servidor. Tente novamente.')
+      }
+      throw error
     }
   }
 
@@ -213,7 +228,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Try to call logout endpoint (optional, can fail silently)
     if (token) {
       try {
-        await fetch(`${API_URL}/api/auth/logout`, {
+        await fetch('/api/auth/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
