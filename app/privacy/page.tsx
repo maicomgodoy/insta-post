@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
                 1. Introdução
               </h2>
               <p>
-                Esta Política de Privacidade descreve como o Insta Post ("nós", "nosso" ou "aplicativo") 
+                Esta Política de Privacidade descreve como o Insta Post (&quot;nós&quot;, &quot;nosso&quot; ou &quot;aplicativo&quot;) 
                 coleta, usa e protege suas informações pessoais quando você utiliza nosso serviço de 
                 geração de posts para redes sociais com inteligência artificial.
               </p>
@@ -224,7 +224,7 @@ export default function PrivacyPolicyPage() {
               <p>
                 Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos você sobre 
                 mudanças significativas publicando a nova política nesta página e atualizando a data 
-                de "Última atualização". Recomendamos que você revise esta política periodicamente.
+                de &quot;Última atualização&quot;. Recomendamos que você revise esta política periodicamente.
               </p>
             </section>
 
