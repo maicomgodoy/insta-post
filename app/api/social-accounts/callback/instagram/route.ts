@@ -118,26 +118,45 @@ export const POST = withAuth(async (request: NextRequest, user) => {
       `https://graph.facebook.com/v21.0/me/businesses?fields=id,name&access_token=${shortLivedToken}`
     )
     
-    if (!businessesResponse.ok) {
-      const errorData = await businessesResponse.json()
-      logger.error('Failed to get Facebook businesses', { error: errorData })
+    let businessesData: FacebookBusinessesResponse
+    try {
+      const responseData = await businessesResponse.json()
+      
+      if (!businessesResponse.ok) {
+        logger.error('Failed to get Facebook businesses', { error: responseData })
+        return NextResponse.json(
+          { error: 'Falha ao obter businesses do Facebook', code: 'BUSINESSES_FETCH_FAILED', details: responseData },
+          { status: 400 }
+        )
+      }
+      
+      businessesData = responseData as FacebookBusinessesResponse
+    } catch (parseError) {
+      logger.error('Failed to parse businesses response', { error: parseError })
       return NextResponse.json(
-        { error: 'Falha ao obter businesses do Facebook', code: 'BUSINESSES_FETCH_FAILED', details: errorData },
+        { error: 'Erro ao processar resposta da API do Facebook', code: 'BUSINESSES_PARSE_FAILED' },
         { status: 400 }
       )
     }
     
-    const businessesData = await businessesResponse.json() as FacebookBusinessesResponse
+    // Validar estrutura da resposta
+    if (!businessesData || !Array.isArray(businessesData.data)) {
+      logger.error('Invalid businesses response structure', { response: businessesData })
+      return NextResponse.json(
+        { error: 'Resposta inválida da API do Facebook', code: 'BUSINESSES_INVALID_RESPONSE' },
+        { status: 400 }
+      )
+    }
     
     logger.info('Facebook businesses fetched', {
-      businessesCount: businessesData.data?.length || 0,
-      businesses: businessesData.data?.map((b) => ({ id: b.id, name: b.name })),
+      businessesCount: businessesData.data.length,
+      businesses: businessesData.data.map((b) => ({ id: b.id, name: b.name })),
     })
     
     // Passo 2.2: Buscar páginas em cada business via /owned_pages
     let pageWithInstagram: FacebookPage | null = null
     
-    if (businessesData.data && businessesData.data.length > 0) {
+    if (businessesData.data.length > 0) {
       // Iterar sobre todos os businesses para encontrar páginas com Instagram
       for (const business of businessesData.data) {
         try {
@@ -145,23 +164,36 @@ export const POST = withAuth(async (request: NextRequest, user) => {
             `https://graph.facebook.com/v21.0/${business.id}/owned_pages?fields=id,name,access_token,instagram_business_account&access_token=${shortLivedToken}`
           )
           
-          if (!ownedPagesResponse.ok) {
-            const errorData = await ownedPagesResponse.json()
-            logger.warn(`Failed to get owned_pages for business ${business.id}`, { error: errorData })
-            continue // Tentar próximo business
+          let ownedPagesData: FacebookPagesResponse
+          try {
+            const responseData = await ownedPagesResponse.json()
+            
+            if (!ownedPagesResponse.ok) {
+              logger.warn(`Failed to get owned_pages for business ${business.id}`, { error: responseData })
+              continue // Tentar próximo business
+            }
+            
+            ownedPagesData = responseData as FacebookPagesResponse
+          } catch (parseError) {
+            logger.warn(`Failed to parse owned_pages for business ${business.id}`, { error: parseError })
+            continue
           }
           
-          const ownedPagesData = await ownedPagesResponse.json() as FacebookPagesResponse
+          // Validar estrutura da resposta
+          if (!ownedPagesData || !Array.isArray(ownedPagesData.data)) {
+            logger.warn(`Invalid owned_pages response for business ${business.id}`, { response: ownedPagesData })
+            continue
+          }
           
           logger.info(`Owned pages for business ${business.id}`, {
             businessId: business.id,
             businessName: business.name,
-            pagesCount: ownedPagesData.data?.length || 0,
+            pagesCount: ownedPagesData.data.length,
           })
           
           // Encontrar página com Instagram Business Account
-          const foundPage = ownedPagesData.data?.find(
-            (page) => page.instagram_business_account
+          const foundPage = ownedPagesData.data.find(
+            (page) => page.instagram_business_account && page.instagram_business_account.id
           )
           
           if (foundPage) {
@@ -193,10 +225,16 @@ export const POST = withAuth(async (request: NextRequest, user) => {
         )
         
         if (fallbackPagesResponse.ok) {
-          const fallbackPagesData = await fallbackPagesResponse.json() as FacebookPagesResponse
-          pageWithInstagram = fallbackPagesData.data?.find(
-            (page) => page.instagram_business_account
-          ) || null
+          try {
+            const fallbackPagesData = await fallbackPagesResponse.json() as FacebookPagesResponse
+            if (fallbackPagesData && Array.isArray(fallbackPagesData.data)) {
+              pageWithInstagram = fallbackPagesData.data.find(
+                (page) => page.instagram_business_account && page.instagram_business_account.id
+              ) || null
+            }
+          } catch (parseError) {
+            logger.warn('Failed to parse fallback /me/accounts response', { error: parseError })
+          }
         }
       } catch (error) {
         logger.warn('Fallback /me/accounts failed', { error: (error as Error).message })
@@ -204,10 +242,10 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     }
     
     // Validação final: verificar se encontrou página com Instagram
-    if (!pageWithInstagram || !pageWithInstagram.instagram_business_account) {
+    if (!pageWithInstagram || !pageWithInstagram.instagram_business_account || !pageWithInstagram.instagram_business_account.id) {
       logger.warn('No Instagram account found via businesses or fallback', {
-        businessesChecked: businessesData.data?.length || 0,
-        businesses: businessesData.data?.map((b) => ({ id: b.id, name: b.name })),
+        businessesChecked: businessesData.data.length,
+        businesses: businessesData.data.map((b) => ({ id: b.id, name: b.name })),
       })
       
       return NextResponse.json(
@@ -222,8 +260,8 @@ export const POST = withAuth(async (request: NextRequest, user) => {
             'Se necessário, reconecte a conta para garantir que todas as permissões foram concedidas',
           ],
           debug: process.env.NODE_ENV === 'development' ? {
-            businessesFound: businessesData.data?.length || 0,
-            businesses: businessesData.data?.map((b) => ({ id: b.id, name: b.name })),
+            businessesFound: businessesData.data.length,
+            businesses: businessesData.data.map((b) => ({ id: b.id, name: b.name })),
           } : undefined,
         },
         { status: 400 }
@@ -262,19 +300,44 @@ export const POST = withAuth(async (request: NextRequest, user) => {
       `https://graph.facebook.com/v21.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${clientId}&client_secret=${clientSecret}&fb_exchange_token=${shortLivedToken}`
     )
     
-    if (!longLivedTokenResponse.ok) {
-      const errorData = await longLivedTokenResponse.json()
-      logger.error('Failed to get long-lived token', { error: errorData })
-      // Continuar mesmo sem token de longa duração
-    }
-    
     let accessToken = pageAccessToken
     let tokenExpiresAt: Date | null = null
     
     if (longLivedTokenResponse.ok) {
-      const longLivedTokenData = await longLivedTokenResponse.json() as LongLivedTokenResponse
-      accessToken = longLivedTokenData.access_token
-      tokenExpiresAt = new Date(Date.now() + longLivedTokenData.expires_in * 1000)
+      try {
+        const longLivedTokenData = await longLivedTokenResponse.json() as LongLivedTokenResponse
+        
+        if (longLivedTokenData.access_token) {
+          accessToken = longLivedTokenData.access_token
+        }
+        
+        // Validar expires_in antes de criar Date
+        if (longLivedTokenData.expires_in && typeof longLivedTokenData.expires_in === 'number' && longLivedTokenData.expires_in > 0) {
+          const expirationTimestamp = Date.now() + longLivedTokenData.expires_in * 1000
+          const expirationDate = new Date(expirationTimestamp)
+          
+          // Validar se a data foi criada corretamente
+          if (!isNaN(expirationDate.getTime())) {
+            tokenExpiresAt = expirationDate
+          } else {
+            logger.warn('Invalid expiration date calculated', {
+              expires_in: longLivedTokenData.expires_in,
+              calculatedTimestamp: expirationTimestamp,
+            })
+          }
+        }
+      } catch (parseError) {
+        logger.warn('Failed to parse long-lived token response', { error: parseError })
+        // Continuar com pageAccessToken mesmo se falhar
+      }
+    } else {
+      try {
+        const errorData = await longLivedTokenResponse.json()
+        logger.warn('Failed to get long-lived token', { error: errorData })
+      } catch {
+        // Ignorar erro ao parsear resposta de erro
+      }
+      // Continuar mesmo sem token de longa duração (usando pageAccessToken)
     }
     
     // 5. Salvar ou atualizar conta no banco de dados
@@ -331,12 +394,22 @@ export const POST = withAuth(async (request: NextRequest, user) => {
       },
     })
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : undefined
+    
     logger.error('Failed to complete Instagram OAuth', {
       userId: user.id,
-      error: (error as Error).message,
+      error: errorMessage,
+      stack: errorStack,
+      errorDetails: process.env.NODE_ENV === 'development' ? error : undefined,
     })
+    
     return NextResponse.json(
-      { error: 'Failed to connect Instagram account', code: 'INTERNAL_ERROR' },
+      { 
+        error: 'Falha ao conectar conta do Instagram', 
+        code: 'INTERNAL_ERROR',
+        message: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
+      },
       { status: 500 }
     )
   }
