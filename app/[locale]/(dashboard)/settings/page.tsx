@@ -7,14 +7,17 @@ import { SubscriptionSection, ConnectedAccountsSection } from '@/components/sett
 import { useState } from 'react'
 import { locales, localeNames, type Locale } from '@/i18n/config'
 import { useParams, useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function SettingsPage() {
   const t = useTranslations('settings')
   const params = useParams()
   const router = useRouter()
+  const { logout } = useAuth()
   const currentLocale = params.locale as string
 
   const [selectedLanguage, setSelectedLanguage] = useState(currentLocale)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const languageOptions = locales.map((locale) => ({
     value: locale,
@@ -25,6 +28,20 @@ export default function SettingsPage() {
     setSelectedLanguage(newLocale)
     // Navigate to the same page with new locale
     router.push(`/${newLocale}/settings`)
+  }
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await logout()
+      router.push(`/${currentLocale}/auth`)
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Even if there's an error, try to redirect
+      router.push(`/${currentLocale}/auth`)
+    } finally {
+      setIsLoggingOut(false)
+    }
   }
 
   return (
@@ -122,6 +139,35 @@ export default function SettingsPage() {
 
       {/* Connected accounts */}
       <ConnectedAccountsSection />
+
+      {/* Session */}
+      <Card padding="lg">
+        <h2 className="text-h3 font-semibold text-gray-900 dark:text-gray-50 mb-6">
+          Sessão
+        </h2>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="text-body font-medium text-gray-900 dark:text-gray-50 mb-1">
+                Sair da conta
+              </p>
+              <p className="text-body-sm text-gray-500 dark:text-gray-400">
+                Encerre sua sessão atual
+              </p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="md"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              loading={isLoggingOut}
+            >
+              {isLoggingOut ? 'Saindo...' : 'Sair'}
+            </Button>
+          </div>
+        </div>
+      </Card>
     </div>
   )
 }
