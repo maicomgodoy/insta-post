@@ -2,9 +2,37 @@ import { Request, Response, NextFunction } from 'express'
 import { ZodError } from 'zod'
 import { logger } from '../lib/logger'
 
+/**
+ * Interface para erros da API (compatibilidade com padrão antigo)
+ */
 export interface ApiError extends Error {
   statusCode?: number
   code?: string
+}
+
+/**
+ * Classe de erro customizado para a API
+ */
+export class AppError extends Error implements ApiError {
+  statusCode: number
+  code?: string
+
+  constructor(message: string, statusCode = 500, code?: string) {
+    super(message)
+    this.name = 'AppError'
+    this.statusCode = statusCode
+    this.code = code
+  }
+}
+
+/**
+ * Função helper para criar erros da API
+ */
+export function createApiError(message: string, statusCode = 500, code?: string): ApiError {
+  const error: ApiError = new Error(message)
+  error.statusCode = statusCode
+  error.code = code
+  return error
 }
 
 /**
@@ -15,7 +43,7 @@ export function errorHandler(
   err: ApiError | ZodError | Error,
   req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction // eslint-disable-line @typescript-eslint/no-unused-vars
 ): void {
   // Erro de validação Zod
   if (err instanceof ZodError) {

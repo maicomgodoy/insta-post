@@ -30,7 +30,7 @@ export class CreditService {
       select: { amount: true },
     })
 
-    const balance = credits.reduce((sum, credit) => sum + credit.amount, 0)
+    const balance = credits.reduce((sum: number, credit: { amount: number }) => sum + credit.amount, 0)
 
     return Math.max(0, balance) // Garantir que não seja negativo
   }

@@ -6,8 +6,29 @@ import { authenticate, AuthenticatedRequest } from '../middleware/auth'
 import { asyncHandler } from '../middleware/async-handler'
 import { logger } from '../lib/logger'
 import { ApiError } from '../middleware/error-handler'
+import { instagramService } from '../lib/services/instagram-service'
 
 const router = Router()
+
+// Tipos para posts com relacionamentos
+interface SocialAccountInfo {
+  id: string
+  accountUsername: string
+  platform: string
+}
+
+interface PostWithSocialAccount {
+  id: string
+  imageUrl: string
+  caption: string
+  status: string
+  scheduledFor: Date | null
+  publishedAt: Date | null
+  instagramPostId: string | null
+  socialAccount: SocialAccountInfo | null
+  createdAt: Date
+  updatedAt: Date
+}
 
 // ============================================
 // SCHEMAS DE VALIDAÇÃO
@@ -119,7 +140,7 @@ router.get(
   '/',
   authenticate,
   validateQuery(listPostsQuerySchema),
-  asyncHandler(async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
+  asyncHandler(async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => { // eslint-disable-line @typescript-eslint/no-unused-vars
     const userId = req.user!.id
     // Query já foi validado pelo middleware validateQuery
     // Usar cast via unknown já que sabemos que foi validado pelo middleware
@@ -151,7 +172,7 @@ router.get(
     ])
 
     res.json({
-      posts: posts.map((post) => ({
+      posts: posts.map((post: PostWithSocialAccount) => ({
         id: post.id,
         imageUrl: post.imageUrl,
         caption: post.caption,
@@ -538,6 +559,151 @@ router.post(
         updatedAt: post.updatedAt,
       },
     })
+  }
+)
+
+/**
+ * POST /api/posts/:id/publish
+ * Publica um post imediatamente no Instagram
+ */
+router.post(
+  '/:id/publish',
+  authenticate,
+  validateParams(postIdParamSchema),
+  validateBody(z.object({
+    socialAccountId: z.string().uuid('ID da conta social inválido'),
+  })),
+  async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user!.id
+    const { id } = req.params
+    const { socialAccountId } = req.body
+
+    // Verificar se o post existe e pertence ao usuário
+    const post = await prisma.post.findFirst({
+      where: {
+        id,
+        userId,
+      },
+      include: {
+        socialAccount: {
+          select: {
+            id: true,
+            accountUsername: true,
+            platform: true,
+            accessToken: true,
+            accountId: true,
+          },
+        },
+      },
+    })
+
+    if (!post) {
+      const error: ApiError = new Error('Post não encontrado')
+      error.statusCode = 404
+      error.code = 'POST_NOT_FOUND'
+      throw error
+    }
+
+    // Verificar se o post já foi publicado
+    if (post.status === 'published') {
+      const error: ApiError = new Error('Post já foi publicado')
+      error.statusCode = 400
+      error.code = 'POST_ALREADY_PUBLISHED'
+      throw error
+    }
+
+    // Verificar se a conta social existe e pertence ao usuário
+    const socialAccount = await prisma.socialAccount.findFirst({
+      where: {
+        id: socialAccountId,
+        userId,
+        isActive: true,
+        platform: 'instagram',
+      },
+    })
+
+    if (!socialAccount) {
+      const error: ApiError = new Error('Conta social não encontrada ou não pertence ao usuário')
+      error.statusCode = 404
+      error.code = 'SOCIAL_ACCOUNT_NOT_FOUND'
+      throw error
+    }
+
+    // Verificar se o token não expirou
+    if (socialAccount.tokenExpiresAt && socialAccount.tokenExpiresAt < new Date()) {
+      const error: ApiError = new Error('Token de acesso expirado. Reconecte a conta do Instagram')
+      error.statusCode = 400
+      error.code = 'TOKEN_EXPIRED'
+      throw error
+    }
+
+    try {
+      // Publicar no Instagram
+      const instagramPostId = await instagramService.publishPost(
+        socialAccount.accessToken,
+        socialAccount.accountId,
+        post.imageUrl,
+        post.caption
+      )
+
+      // Atualizar post no banco
+      const updatedPost = await prisma.post.update({
+        where: { id },
+        data: {
+          status: 'published',
+          publishedAt: new Date(),
+          instagramPostId,
+          socialAccountId,
+        },
+        include: {
+          socialAccount: {
+            select: {
+              id: true,
+              accountUsername: true,
+              platform: true,
+            },
+          },
+        },
+      })
+
+      logger.info('Post published to Instagram', {
+        postId: post.id,
+        userId,
+        instagramPostId,
+        socialAccountId,
+      })
+
+      res.json({
+        message: 'Post publicado com sucesso no Instagram',
+        post: {
+          id: updatedPost.id,
+          imageUrl: updatedPost.imageUrl,
+          caption: updatedPost.caption,
+          status: updatedPost.status,
+          publishedAt: updatedPost.publishedAt,
+          instagramPostId: updatedPost.instagramPostId,
+          socialAccount: updatedPost.socialAccount,
+          createdAt: updatedPost.createdAt,
+          updatedAt: updatedPost.updatedAt,
+        },
+      })
+    } catch (error) {
+      // Atualizar status do post para 'failed' em caso de erro
+      await prisma.post.update({
+        where: { id },
+        data: { status: 'failed' },
+      })
+
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      logger.error('Failed to publish post to Instagram', {
+        postId: post.id,
+        userId,
+        error: errorMessage,
+      })
+
+      // Re-throw o erro para ser tratado pelo error handler
+      throw error
+    }
   }
 )
 

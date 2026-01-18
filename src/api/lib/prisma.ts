@@ -16,8 +16,9 @@ prisma.$connect()
   .then(() => {
     logger.info('Prisma connected to database')
   })
-  .catch((error) => {
-    logger.error('Failed to connect to database', { error: error.message })
+  .catch((error: unknown) => {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    logger.error('Failed to connect to database', { error: errorMessage })
   })
 
 // Graceful shutdown

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { Card, Button, Loading, Empty } from '@/components/ui'
 import { useToast } from '@/components/ui/Toast'
@@ -12,7 +12,10 @@ interface SocialAccount {
   accountUsername: string
   isActive: boolean
   createdAt: string
+  isTokenExpired?: boolean
 }
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
 export function ConnectedAccountsSection() {
   const t = useTranslations('settings')
@@ -22,37 +25,86 @@ export function ConnectedAccountsSection() {
   const [loading, setLoading] = useState(true)
   const [connecting, setConnecting] = useState(false)
 
-  // TODO: Implementar quando backend OAuth estiver pronto (Fase 5.4)
-  // Por enquanto, apenas estrutura visual
-  useEffect(() => {
-    // Simular loading
-    setTimeout(() => {
-      setLoading(false)
-      // Por enquanto, não há contas (quando OAuth estiver pronto, buscar do backend)
-      setAccounts([])
-    }, 500)
-  }, [])
+  // Buscar contas conectadas
+  const fetchAccounts = useCallback(async () => {
+    try {
+      setLoading(true)
+      const token = localStorage.getItem('access_token')
+      
+      if (!token) {
+        setLoading(false)
+        return
+      }
 
-  // TODO: Implementar quando backend OAuth estiver pronto
+      const response = await fetch(`${API_URL}/api/social-accounts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error('Falha ao carregar contas')
+      }
+
+      const data = await response.json()
+      setAccounts(data.accounts || [])
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro',
+        message: err instanceof Error ? err.message : 'Falha ao carregar contas conectadas',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [addToast])
+
+  useEffect(() => {
+    fetchAccounts()
+  }, [fetchAccounts])
+
   const handleConnect = async () => {
-    setConnecting(true)
-    addToast({
-      type: 'info',
-      title: 'OAuth não implementado',
-      message: 'A integração OAuth do Instagram será implementada na Fase 5.4 do backend.',
-    })
-    setConnecting(false)
-    
-    // Quando implementado:
-    // 1. Redirecionar para endpoint OAuth do backend
-    // 2. Backend redireciona para Instagram OAuth
-    // 3. Instagram redireciona de volta para callback
-    // 4. Backend processa e retorna
-    // 5. Atualizar lista de contas
+    try {
+      setConnecting(true)
+      const token = localStorage.getItem('access_token')
+      
+      if (!token) {
+        addToast({
+          type: 'error',
+          title: 'Erro',
+          message: 'Você precisa estar logado',
+        })
+        return
+      }
+
+      // Obter URL de autorização do backend
+      const response = await fetch(`${API_URL}/api/social-accounts/connect/instagram`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Falha ao iniciar conexão')
+      }
+
+      const data = await response.json()
+      
+      // Redirecionar para página de autorização do Instagram
+      // O Instagram redirecionará de volta para o callback configurado
+      window.location.href = data.authUrl
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro',
+        message: err instanceof Error ? err.message : 'Falha ao conectar conta do Instagram',
+      })
+      setConnecting(false)
+    }
   }
 
-  // TODO: Implementar quando backend OAuth estiver pronto
-  const handleDisconnect = async (_accountId: string) => {
+  const handleDisconnect = async (accountId: string) => {
     if (!confirm('Tem certeza que deseja desconectar esta conta?')) {
       return
     }
@@ -62,33 +114,37 @@ export function ConnectedAccountsSection() {
       if (!token) {
         addToast({
           type: 'error',
-          title: 'Error',
+          title: 'Erro',
           message: 'Você precisa estar logado',
         })
         return
       }
 
-      // TODO: Chamar endpoint DELETE /api/social-accounts/:id
-      // const response = await fetch(`${API_URL}/api/social-accounts/${accountId}`, {
-      //   method: 'DELETE',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      // })
-      
+      const response = await fetch(`${API_URL}/api/social-accounts/${accountId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Falha ao desconectar conta')
+      }
+
       addToast({
-        type: 'info',
-        title: 'OAuth não implementado',
-        message: 'A desconexão será implementada na Fase 5.4 do backend.',
+        type: 'success',
+        title: 'Sucesso',
+        message: 'Conta desconectada com sucesso',
       })
       
       // Atualizar lista
-      // setAccounts(accounts.filter(acc => acc.id !== accountId))
+      await fetchAccounts()
     } catch (err) {
       addToast({
         type: 'error',
-        title: 'Error',
-        message: err instanceof Error ? err.message : 'Failed to disconnect account',
+        title: 'Erro',
+        message: err instanceof Error ? err.message : 'Falha ao desconectar conta',
       })
     }
   }
@@ -143,6 +199,11 @@ export function ConnectedAccountsSection() {
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     Conectado em {new Date(account.createdAt).toLocaleDateString()}
                   </p>
+                  {account.isTokenExpired && (
+                    <p className="text-xs text-orange-500 dark:text-orange-400 mt-1">
+                      Token expirado - reconecte a conta
+                    </p>
+                  )}
                 </div>
               </div>
               <Button

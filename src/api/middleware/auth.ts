@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { supabaseAdmin } from '../lib/supabase'
-import { ApiError } from './error-handler'
+import { ApiError, createApiError } from './error-handler'
 import { logger } from '../lib/logger'
 
 export interface AuthenticatedRequest extends Request {
@@ -24,10 +24,7 @@ export async function authenticate(
     const authHeader = req.headers.authorization
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      const error: ApiError = new Error('Unauthorized: Missing or invalid token')
-      error.statusCode = 401
-      error.code = 'UNAUTHORIZED'
-      throw error
+      throw createApiError('Unauthorized: Missing or invalid token', 401, 'UNAUTHORIZED')
     }
 
     const token = authHeader.substring(7) // Remove "Bearer "
@@ -36,10 +33,7 @@ export async function authenticate(
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token)
 
     if (error || !user) {
-      const apiError: ApiError = new Error('Unauthorized: Invalid token')
-      apiError.statusCode = 401
-      apiError.code = 'INVALID_TOKEN'
-      throw apiError
+      throw createApiError('Unauthorized: Invalid token', 401, 'INVALID_TOKEN')
     }
 
     // Adicionar usuário à requisição
@@ -57,10 +51,7 @@ export async function authenticate(
         path: req.path,
         error: (error as Error).message,
       })
-      const apiError: ApiError = new Error('Authentication failed')
-      apiError.statusCode = 401
-      apiError.code = 'AUTH_ERROR'
-      next(apiError)
+      next(createApiError('Authentication failed', 401, 'AUTH_ERROR'))
     }
   }
 }

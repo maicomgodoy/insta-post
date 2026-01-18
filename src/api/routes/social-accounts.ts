@@ -11,9 +11,15 @@ const router = Router()
 // ============================================
 // CONFIGURAÇÕES DO INSTAGRAM/FACEBOOK
 // ============================================
+// IMPORTANTE: Para publicar posts no Instagram, é necessário usar a Instagram Graph API
+// que requer:
+// 1. Conta Instagram Business ou Creator
+// 2. Conta vinculada a uma Página do Facebook
+// 3. App do Facebook configurado com permissões: instagram_basic, pages_show_list, instagram_content_publish
+// 4. OAuth via Facebook (não diretamente via Instagram)
 
-const INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID
-const INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET
+const INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID || process.env.FACEBOOK_APP_ID
+const INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET || process.env.FACEBOOK_APP_SECRET
 const INSTAGRAM_REDIRECT_URI = process.env.INSTAGRAM_REDIRECT_URI || 'http://localhost:3000/auth/callback/instagram'
 
 // ============================================
@@ -155,12 +161,17 @@ router.get('/connect/instagram', authenticate, async (req: AuthenticatedRequest,
     timestamp: Date.now(),
   })).toString('base64')
 
-  // URL de autorização do Instagram (via Facebook)
-  // Usando Instagram Basic Display API ou Instagram Graph API
-  const authUrl = new URL('https://api.instagram.com/oauth/authorize')
+  // URL de autorização do Facebook (para Instagram Graph API)
+  // Para publicar posts, precisamos usar Facebook OAuth com permissões do Instagram
+  const authUrl = new URL('https://www.facebook.com/v21.0/dialog/oauth')
   authUrl.searchParams.set('client_id', INSTAGRAM_CLIENT_ID)
   authUrl.searchParams.set('redirect_uri', INSTAGRAM_REDIRECT_URI)
-  authUrl.searchParams.set('scope', 'user_profile,user_media')
+  // Permissões necessárias para publicar no Instagram:
+  // - instagram_basic: Acesso básico ao Instagram
+  // - pages_show_list: Listar páginas do Facebook vinculadas
+  // - instagram_content_publish: Publicar conteúdo no Instagram
+  // - pages_read_engagement: Ler engajamento das páginas
+  authUrl.searchParams.set('scope', 'instagram_basic,pages_show_list,instagram_content_publish,pages_read_engagement')
   authUrl.searchParams.set('response_type', 'code')
   authUrl.searchParams.set('state', state)
 
@@ -213,19 +224,16 @@ router.post(
     }
 
     try {
-      // Trocar code por access_token
-      const tokenResponse = await fetch('https://api.instagram.com/oauth/access_token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          client_id: INSTAGRAM_CLIENT_ID,
-          client_secret: INSTAGRAM_CLIENT_SECRET,
-          grant_type: 'authorization_code',
-          redirect_uri: INSTAGRAM_REDIRECT_URI,
-          code,
-        }),
+      // Trocar code por access_token via Facebook OAuth
+      // Para Instagram Graph API, usamos Facebook OAuth
+      const tokenUrl = new URL('https://graph.facebook.com/v21.0/oauth/access_token')
+      tokenUrl.searchParams.set('client_id', INSTAGRAM_CLIENT_ID)
+      tokenUrl.searchParams.set('client_secret', INSTAGRAM_CLIENT_SECRET)
+      tokenUrl.searchParams.set('redirect_uri', INSTAGRAM_REDIRECT_URI)
+      tokenUrl.searchParams.set('code', code)
+
+      const tokenResponse = await fetch(tokenUrl.toString(), {
+        method: 'GET',
       })
 
       if (!tokenResponse.ok) {
@@ -238,42 +246,96 @@ router.post(
       }
 
       const tokenData = await tokenResponse.json() as InstagramTokenResponse
-      const { access_token, user_id: instagramUserId } = tokenData
+      const { access_token } = tokenData
 
-      // Obter informações do perfil
+      // Para Instagram Graph API, o fluxo completo requer:
+      // 1. Obter páginas do Facebook vinculadas
+      // 2. Para cada página, obter o Instagram Business Account ID
+      // 3. Usar o token da página para acessar o Instagram
+      // 
+      // Por enquanto, vamos tentar obter diretamente o perfil do Instagram
+      // Se o token já for do tipo correto (long-lived token do Instagram), funcionará
+      
+      // Tentar obter perfil diretamente do Instagram
+      let profileData: InstagramProfileResponse | null = null
+      let instagramUserId: string | null = null
+      let finalAccessToken = access_token
+      
       const profileResponse = await fetch(
         `https://graph.instagram.com/me?fields=id,username&access_token=${access_token}`
       )
 
-      if (!profileResponse.ok) {
-        const error: ApiError = new Error('Falha ao obter perfil do Instagram')
+      if (profileResponse.ok) {
+        profileData = await profileResponse.json() as InstagramProfileResponse
+        instagramUserId = profileData.id
+      } else {
+        // Se não funcionou diretamente, tentar via páginas do Facebook
+        const pagesResponse = await fetch(
+          `https://graph.facebook.com/v21.0/me/accounts?access_token=${access_token}`
+        )
+
+        if (pagesResponse.ok) {
+          const pagesData = await pagesResponse.json() as { data: Array<{ id: string; access_token: string }> }
+          
+          // Para cada página, tentar obter o Instagram Business Account
+          for (const page of pagesData.data) {
+            const igAccountResponse = await fetch(
+              `https://graph.facebook.com/v21.0/${page.id}?fields=instagram_business_account&access_token=${page.access_token}`
+            )
+            
+            if (igAccountResponse.ok) {
+              const igAccountData = await igAccountResponse.json() as { instagram_business_account?: { id: string } }
+              
+              if (igAccountData.instagram_business_account) {
+                instagramUserId = igAccountData.instagram_business_account.id
+                
+                // Obter informações do perfil do Instagram usando token da página
+                const igProfileResponse = await fetch(
+                  `https://graph.instagram.com/${instagramUserId}?fields=id,username&access_token=${page.access_token}`
+                )
+                
+                if (igProfileResponse.ok) {
+                  profileData = await igProfileResponse.json() as InstagramProfileResponse
+                  finalAccessToken = page.access_token // Usar token da página
+                  break
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (!profileData || !instagramUserId) {
+        const error: ApiError = new Error('Falha ao obter perfil do Instagram. Certifique-se de que a conta está vinculada a uma Página do Facebook e que o app tem as permissões necessárias.')
         error.statusCode = 400
         error.code = 'PROFILE_FETCH_FAILED'
         throw error
       }
 
-      const profileData = await profileResponse.json() as InstagramProfileResponse
-
-      // Obter token de longa duração (60 dias)
-      const longLivedTokenResponse = await fetch(
-        `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${INSTAGRAM_CLIENT_SECRET}&access_token=${access_token}`
-      )
-
-      let finalAccessToken = access_token
+      // Obter token de longa duração (60 dias) se possível
+      // Nota: Para tokens de página, isso pode não ser necessário
       let tokenExpiresAt: Date | null = null
+      
+      try {
+        const longLivedTokenResponse = await fetch(
+          `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${INSTAGRAM_CLIENT_SECRET}&access_token=${finalAccessToken}`
+        )
 
-      if (longLivedTokenResponse.ok) {
-        const longLivedData = await longLivedTokenResponse.json() as InstagramLongLivedTokenResponse
-        finalAccessToken = longLivedData.access_token
-        // Token de longa duração expira em 60 dias
-        tokenExpiresAt = new Date(Date.now() + longLivedData.expires_in * 1000)
+        if (longLivedTokenResponse.ok) {
+          const longLivedData = await longLivedTokenResponse.json() as InstagramLongLivedTokenResponse
+          finalAccessToken = longLivedData.access_token
+          tokenExpiresAt = new Date(Date.now() + longLivedData.expires_in * 1000)
+        }
+      } catch (error) {
+        // Se falhar ao obter long-lived token, usar o token atual
+        logger.warn('Failed to exchange for long-lived token', { error })
       }
 
       // Verificar se a conta já está conectada
       const existingAccount = await prisma.socialAccount.findFirst({
         where: {
           userId,
-          accountId: instagramUserId.toString(),
+          accountId: instagramUserId,
           platform: 'instagram',
         },
       })
@@ -298,7 +360,7 @@ router.post(
           data: {
             userId,
             platform: 'instagram',
-            accountId: instagramUserId.toString(),
+            accountId: instagramUserId,
             accountUsername: profileData.username,
             accessToken: finalAccessToken,
             tokenExpiresAt,

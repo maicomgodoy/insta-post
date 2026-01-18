@@ -7,6 +7,15 @@ import { logger } from '../lib/logger'
 
 const router = Router()
 
+// Tipos
+interface Credit {
+  id: string
+  amount: number
+  type: string
+  description: string | null
+  createdAt: Date
+}
+
 // Schemas de validação
 const creditHistoryQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional().default(50),
@@ -62,7 +71,7 @@ router.get(
       })
 
       res.json({
-        credits: history.credits.map((credit) => ({
+        credits: history.credits.map((credit: Credit) => ({
           id: credit.id,
           amount: credit.amount,
           type: credit.type,
