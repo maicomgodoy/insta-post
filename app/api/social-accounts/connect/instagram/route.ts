@@ -49,6 +49,8 @@ export const GET = withAuth(async (request: NextRequest, user) => {
     // Parâmetros para melhorar a experiência do usuário
     authUrl.searchParams.set('display', 'page') // Exibe em página completa
     authUrl.searchParams.set('auth_type', 'rerequest') // Solicita permissões novamente se necessário
+    // Forçar a tela de permissões mesmo se já autorizado
+    authUrl.searchParams.set('prompt', 'consent') // Força a tela de consentimento/permissões
     
     logger.info('Instagram OAuth initiated', {
       userId: user.id,

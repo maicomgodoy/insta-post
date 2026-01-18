@@ -85,32 +85,103 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     const tokenData = await tokenResponse.json() as FacebookTokenResponse
     const shortLivedToken = tokenData.access_token
     
+    // Debug: Verificar permissões do token (apenas em desenvolvimento)
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        const debugTokenResponse = await fetch(
+          `https://graph.facebook.com/v21.0/debug_token?input_token=${shortLivedToken}&access_token=${shortLivedToken}`
+        )
+        if (debugTokenResponse.ok) {
+          const debugData = await debugTokenResponse.json()
+          logger.info('Token debug info', {
+            scopes: debugData.data?.scopes || [],
+            userId: debugData.data?.user_id,
+          })
+        }
+      } catch (error) {
+        // Ignorar erro de debug
+      }
+    }
+    
     // 2. Obter páginas do Facebook e encontrar Instagram Business Account
     const pagesResponse = await fetch(
       `https://graph.facebook.com/v21.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${shortLivedToken}`
     )
     
+    const pagesData = await pagesResponse.json()
+    
+    // Log completo da resposta para debug
+    logger.info('Facebook pages API response', {
+      status: pagesResponse.status,
+      statusText: pagesResponse.statusText,
+      hasData: !!pagesData.data,
+      dataLength: pagesData.data?.length || 0,
+      fullResponse: pagesData,
+    })
+    
     if (!pagesResponse.ok) {
-      const errorData = await pagesResponse.json()
-      logger.error('Failed to get Facebook pages', { error: errorData })
+      logger.error('Failed to get Facebook pages', { error: pagesData })
       return NextResponse.json(
-        { error: 'Falha ao obter páginas do Facebook', code: 'PAGES_FETCH_FAILED' },
+        { error: 'Falha ao obter páginas do Facebook', code: 'PAGES_FETCH_FAILED', details: pagesData },
         { status: 400 }
       )
     }
     
-    const pagesData = await pagesResponse.json() as FacebookPagesResponse
+    const typedPagesData = pagesData as FacebookPagesResponse
+    
+    // Log para debug - ver o que a API retornou
+    logger.info('Facebook pages fetched', {
+      pagesCount: typedPagesData.data?.length || 0,
+      pages: typedPagesData.data?.map((page) => ({
+        id: page.id,
+        name: page.name,
+        hasInstagramAccount: !!page.instagram_business_account,
+      })),
+    })
+    
+    // Se não retornou nenhuma página, o problema é que a página não está conectada ao app
+    if (!typedPagesData.data || typedPagesData.data.length === 0) {
+      logger.warn('No Facebook pages returned - possible causes', {
+        hasPagesShowListPermission: true,
+        appMode: 'Verify if app is in Live mode (not Development mode)',
+        hint: 'If app is in Development mode, /me/accounts may return empty array even with permissions granted',
+      })
+      
+      return NextResponse.json(
+        {
+          error: 'Nenhuma página do Facebook encontrada. Possíveis causas: 1) App em modo de desenvolvimento (precisa estar em Live), 2) Página não conectada ao app, 3) Permissões não propagadas ainda.',
+          code: 'NO_PAGES_FOUND',
+          hint: 'Verifique se o app está em modo Live (não Development) no painel do Facebook Developer. Em modo Development, o endpoint pode retornar vazio mesmo com permissões.',
+          troubleshooting: [
+            'Verifique o modo do app: https://developers.facebook.com/apps/ → Seu App → Settings → Basic → App Mode',
+            'Se estiver em Development, adicione sua conta como Tester em Roles → Roles',
+            'Ou coloque o app em modo Live (requer App Review)',
+          ],
+        },
+        { status: 400 }
+      )
+    }
     
     // Encontrar a primeira página com Instagram Business Account
-    const pageWithInstagram = pagesData.data.find(
+    const pageWithInstagram = typedPagesData.data.find(
       (page) => page.instagram_business_account
     )
     
     if (!pageWithInstagram || !pageWithInstagram.instagram_business_account) {
+      logger.warn('No Instagram account found on any Facebook page', {
+        pagesCount: typedPagesData.data?.length || 0,
+        pagesIds: typedPagesData.data?.map((p) => p.id) || [],
+        pages: typedPagesData.data?.map((p) => ({ id: p.id, name: p.name })),
+      })
+      
       return NextResponse.json(
         {
-          error: 'Nenhuma conta Instagram Business/Creator encontrada. Conecte uma conta Instagram à sua Página do Facebook.',
+          error: 'Nenhuma conta Instagram Business/Creator encontrada nas suas páginas do Facebook. Verifique se: 1) Sua conta Instagram é Business ou Creator, 2) Está vinculada à sua Página do Facebook, 3) Você é administrador da página.',
           code: 'NO_INSTAGRAM_ACCOUNT',
+          debug: process.env.NODE_ENV === 'development' ? {
+            pagesFound: typedPagesData.data?.length || 0,
+            pages: typedPagesData.data?.map((p) => ({ id: p.id, name: p.name })),
+          } : undefined,
         },
         { status: 400 }
       )
@@ -118,6 +189,12 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     
     const instagramAccountId = pageWithInstagram.instagram_business_account.id
     const pageAccessToken = pageWithInstagram.access_token
+    
+    logger.info('Found page with Instagram account', {
+      pageId: pageWithInstagram.id,
+      pageName: pageWithInstagram.name,
+      instagramAccountId,
+    })
     
     // 3. Obter informações do perfil do Instagram
     const profileResponse = await fetch(
