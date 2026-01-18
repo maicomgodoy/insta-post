@@ -31,8 +31,9 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Exclude /auth route
-  if (pathname === '/auth' || pathname.startsWith('/auth/')) {
+  // Exclude public routes that don't need i18n
+  const publicRoutes = ['/auth', '/privacy', '/terms']
+  if (publicRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))) {
     return NextResponse.next()
   }
 
