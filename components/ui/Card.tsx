@@ -13,13 +13,13 @@ interface CardProps {
 
 const variantStyles: Record<CardVariant, string> = {
   default: `
-    bg-white dark:bg-gray-800
-    border border-gray-200 dark:border-gray-700
+    bg-white dark:bg-[#141414]
+    border border-gray-200 dark:border-gray-800
     shadow-sm
   `,
   outlined: `
     bg-transparent
-    border border-gray-200 dark:border-gray-700
+    border border-gray-200 dark:border-gray-800
   `,
 }
 
@@ -42,6 +42,7 @@ export function Card({
         rounded-lg
         ${variantStyles[variant]}
         ${paddingStyles[padding]}
+        transition-colors duration-fast
         ${className}
       `}
     >

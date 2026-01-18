@@ -7,13 +7,13 @@ export default function CreatePostPage() {
   const t = useTranslations('createPost')
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl">
       {/* Page header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-h1 font-bold text-gray-900 dark:text-gray-50">
           {t('title')}
         </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
+        <p className="mt-2 text-body-lg text-gray-500 dark:text-gray-400">
           {t('subtitle')}
         </p>
       </div>

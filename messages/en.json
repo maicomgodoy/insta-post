@@ -82,7 +82,15 @@
       "inspirational": "Inspirational",
       "educational": "Educational",
       "promotional": "Promotional"
-    }
+    },
+    "validationError": "Validation error",
+    "fillAllFields": "Please fill in all fields",
+    "authError": "Authentication error",
+    "pleaseLogin": "Please log in",
+    "successTitle": "Post generated!",
+    "successMessage": "Your post has been created successfully.",
+    "errorTitle": "Error",
+    "errorMessage": "Failed to generate post. Please try again."
   },
   "dashboard": {
     "title": "Dashboard",

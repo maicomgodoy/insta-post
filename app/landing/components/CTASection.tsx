@@ -1,21 +1,21 @@
 import Link from 'next/link'
+import { Button } from '@/components/ui'
 
 export default function CTASection() {
   return (
-    <section className="bg-white py-20">
+    <section className="bg-primary-500 dark:bg-primary-600 py-20 lg:py-32">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center space-y-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+          <h2 className="text-h1 font-bold text-white">
             Pronto para criar seus posts?
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-body-lg text-white/90">
             Comece agora. 14 dias grátis. Sem cartão de crédito.
           </p>
-          <Link
-            href="/auth"
-            className="inline-block bg-primary text-white px-10 py-5 rounded-lg font-semibold text-lg hover:bg-primary/90 transition-colors"
-          >
-            Começar grátis
+          <Link href="/auth">
+            <Button variant="secondary" size="lg" className="bg-white text-primary-600 hover:bg-gray-100">
+              Começar grátis
+            </Button>
           </Link>
         </div>
       </div>

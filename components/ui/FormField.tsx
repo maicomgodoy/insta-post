@@ -13,7 +13,7 @@ interface FormFieldProps {
  */
 export function FormField({ children, className = '' }: FormFieldProps) {
   return (
-    <div className={`mb-4 last:mb-0 ${className}`}>
+    <div className={`mb-6 last:mb-0 ${className}`}>
       {children}
     </div>
   )

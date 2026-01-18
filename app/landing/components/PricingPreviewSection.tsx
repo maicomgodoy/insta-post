@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Card, Button } from '@/components/ui'
 
 export default function PricingPreviewSection() {
   const plans = [
@@ -21,37 +22,37 @@ export default function PricingPreviewSection() {
   ]
 
   return (
-    <section className="bg-gray-50 py-20">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <section className="bg-gray-50 dark:bg-[#0A0A0A] py-20 lg:py-32">
+      <div className="container mx-auto px-4 max-w-7xl">
         <div className="text-center mb-12">
-          <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full font-semibold mb-4">
+          <div className="inline-block bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 px-4 py-2 rounded-full font-semibold mb-6 text-body-sm">
             14 dias grátis
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-h1 font-bold text-gray-900 dark:text-gray-50 mb-4">
             Teste todas as funcionalidades sem compromisso
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-body-lg text-gray-500 dark:text-gray-400">
             Experimente todos os planos durante 14 dias grátis
           </p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {plans.map((plan, index) => (
-            <div
+            <Card
               key={index}
-              className="bg-white border border-gray-200 rounded-lg p-6 text-center"
+              padding="lg"
+              className="text-center"
             >
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-              <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
-              <div className="text-sm text-primary font-semibold">Incluído no teste grátis</div>
-            </div>
+              <h3 className="text-h3 font-semibold text-gray-900 dark:text-gray-50 mb-2">{plan.name}</h3>
+              <p className="text-body-sm text-gray-500 dark:text-gray-400 mb-4">{plan.description}</p>
+              <div className="text-body-sm text-primary-600 dark:text-primary-400 font-medium">Incluído no teste grátis</div>
+            </Card>
           ))}
         </div>
         <div className="text-center">
-          <Link
-            href="/auth"
-            className="inline-block bg-primary text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary/90 transition-colors"
-          >
-            Começar teste grátis
+          <Link href="/auth">
+            <Button variant="primary" size="lg">
+              Começar teste grátis
+            </Button>
           </Link>
         </div>
       </div>

@@ -75,16 +75,16 @@ Lista estruturada de tarefas para desenvolvimento do MVP, organizadas por ordem 
 
 ### 2.2. Schema do Banco de Dados
 - 🤖 **IA desenvolve:**
-  - [ ] Schema de Usuários (users)
-  - [ ] Schema de Assinaturas (subscriptions)
-  - [ ] Schema de Planos (plans)
-  - [ ] Schema de Créditos (credits/usage)
-  - [ ] Schema de Posts (posts)
-  - [ ] Schema de Contas Sociais Conectadas (social_accounts)
-  - [ ] Schema de Posts Agendados (scheduled_posts)
-  - [ ] Relacionamentos entre tabelas
-  - [ ] Índices necessários para performance
-  - [ ] Migração inicial do Prisma
+  - [x] Schema de Usuários (users)
+  - [x] Schema de Assinaturas (subscriptions)
+  - [x] Schema de Planos (plans)
+  - [x] Schema de Créditos (credits/usage)
+  - [x] Schema de Posts (posts)
+  - [x] Schema de Contas Sociais Conectadas (social_accounts)
+  - [x] Schema de Posts Agendados (scheduled_posts)
+  - [x] Relacionamentos entre tabelas
+  - [x] Índices necessários para performance
+  - [x] Migração inicial do Prisma
 
 **Checkpoint:** Schema criado e migrado com sucesso
 
@@ -92,9 +92,9 @@ Lista estruturada de tarefas para desenvolvimento do MVP, organizadas por ordem 
 
 ### 2.3. Row Level Security (RLS) - Supabase
 - 🤖 **IA desenvolve:**
-  - [ ] Configurar políticas RLS no Supabase
-  - [ ] Políticas de acesso para cada tabela
-  - [ ] Testes de segurança básicos
+  - [x] Configurar políticas RLS no Supabase
+  - [x] Políticas de acesso para cada tabela
+  - [ ] Testes de segurança básicos (pode ser feito depois)
 
 **Checkpoint:** RLS configurado e testado
 
@@ -104,13 +104,12 @@ Lista estruturada de tarefas para desenvolvimento do MVP, organizadas por ordem 
 
 ### 3.1. Estrutura Base do Backend
 - 🤖 **IA desenvolve:**
-  - [ ] Configurar Express.js com TypeScript
-  - [ ] Estrutura de pastas do backend (src/api, src/routes, src/middleware, etc)
-  - [ ] Configuração de CORS
-  - [ ] Middleware de tratamento de erros
-  - [ ] Middleware de validação (Zod)
-  - [ ] Configuração de logger
-  - [ ] Health check endpoint
+  - [x] Configurar Next.js API Routes (ao invés de Express)
+  - [x] Estrutura de pastas do backend (app/api, src/middleware, etc)
+  - [x] Middleware de tratamento de erros
+  - [x] Middleware de validação (Zod)
+  - [x] Configuração de logger
+  - [x] Health check endpoint
 
 **Checkpoint:** Backend base funcionando
 
@@ -118,11 +117,11 @@ Lista estruturada de tarefas para desenvolvimento do MVP, organizadas por ordem 
 
 ### 3.2. Autenticação com Supabase
 - 🤖 **IA desenvolve:**
-  - [ ] Integração com Supabase Auth
-  - [ ] Middleware de autenticação
-  - [ ] Endpoints de login/logout/registro
-  - [ ] Refresh token handling
-  - [ ] Proteção de rotas autenticadas
+  - [x] Integração com Supabase Auth
+  - [x] Middleware de autenticação
+  - [x] Endpoints de login/logout/registro
+  - [x] Refresh token handling
+  - [x] Proteção de rotas autenticadas
 
 **Checkpoint:** Autenticação funcionando
 
@@ -143,12 +142,12 @@ Lista estruturada de tarefas para desenvolvimento do MVP, organizadas por ordem 
 
 ### 3.4. Sistema de Créditos e Planos
 - 🤖 **IA desenvolve:**
-  - [ ] Lógica de gerenciamento de créditos
-  - [ ] Verificação de créditos disponíveis
-  - [ ] Consumo de créditos por operação
-  - [ ] Renovação mensal de créditos
-  - [ ] Validação de limites por plano
-  - [ ] Endpoints para consultar créditos
+  - [x] Lógica de gerenciamento de créditos
+  - [x] Verificação de créditos disponíveis
+  - [x] Consumo de créditos por operação
+  - [x] Renovação mensal de créditos
+  - [x] Validação de limites por plano
+  - [x] Endpoints para consultar créditos
 
 **Checkpoint:** Sistema de créditos funcionando
 
@@ -312,15 +311,14 @@ Lista estruturada de tarefas para desenvolvimento do MVP, organizadas por ordem 
 
 ### 6.1. Configuração Next.js
 - 🤖 **IA desenvolve:**
-  - [ ] Configurar Next.js com TypeScript
-  - [ ] Configurar Tailwind CSS
-  - [ ] Configurar shadcn/ui
-  - [ ] Estrutura de pastas (app router)
-  - [ ] Configuração de tema (dark/light mode)
-  - [ ] Sistema de tema com Context/Provider
-  - [ ] Persistir preferência de tema no perfil do usuário
-  - [ ] Hook para alternância de tema
-  - [ ] Layout base com Sidebar
+  - [x] Configurar Next.js com TypeScript
+  - [x] Configurar Tailwind CSS
+  - [x] Estrutura de pastas (app router)
+  - [x] Configuração de tema (dark/light mode)
+  - [x] Sistema de tema com Context/Provider
+  - [x] Hook para alternância de tema
+  - [x] Layout base com Sidebar
+  - [ ] Persistir preferência de tema no perfil do usuário (opcional para MVP)
 
 **Checkpoint:** Next.js configurado e tema funcionando
 
@@ -328,12 +326,12 @@ Lista estruturada de tarefas para desenvolvimento do MVP, organizadas por ordem 
 
 ### 6.2. Autenticação Frontend
 - 🤖 **IA desenvolve:**
-  - [ ] Página de login
-  - [ ] Página de registro
-  - [ ] Context/Provider de autenticação
-  - [ ] Hook de autenticação
-  - [ ] Proteção de rotas
-  - [ ] Middleware de autenticação Next.js
+  - [x] Página de login
+  - [x] Página de registro
+  - [x] Context/Provider de autenticação
+  - [x] Hook de autenticação
+  - [x] Proteção de rotas
+  - [x] Middleware de autenticação Next.js
 
 **Checkpoint:** Autenticação frontend funcionando
 
@@ -341,13 +339,13 @@ Lista estruturada de tarefas para desenvolvimento do MVP, organizadas por ordem 
 
 ### 6.3. Componentes Base UI
 - 🤖 **IA desenvolve:**
-  - [ ] Sidebar navegável
-  - [ ] Header/Navbar
+  - [x] Sidebar navegável
+  - [x] Botões e componentes base (UI components)
+  - [x] Loading states
+  - [x] Error states
+  - [x] Toast/Notifications
+  - [ ] Header/Navbar completo (com botão de tema)
   - [ ] Botão de alternância de tema (Light/Dark) no Header/Navbar
-  - [ ] Botões e componentes base (shadcn/ui)
-  - [ ] Loading states
-  - [ ] Error states
-  - [ ] Toast/Notifications
 
 **Checkpoint:** Componentes base criados
 
@@ -355,14 +353,12 @@ Lista estruturada de tarefas para desenvolvimento do MVP, organizadas por ordem 
 
 ### 6.4. Internacionalização (i18n)
 - 🤖 **IA desenvolve:**
-  - [ ] Configurar biblioteca de i18n (next-intl ou similar)
-  - [ ] Criar arquivos de tradução (pt-BR, es, en)
-  - [ ] Implementar detecção automática de idioma do navegador
-  - [ ] Criar contexto/provider de idioma
-  - [ ] Hook para seleção de idioma
+  - [x] Configurar biblioteca de i18n (next-intl)
+  - [x] Criar arquivos de tradução (pt-BR, es, en)
+  - [x] Implementar detecção automática de idioma do navegador
+  - [x] Aplicar traduções em telas principais
   - [ ] Seletor de idioma na tela de Configurações
   - [ ] Persistir preferência de idioma no perfil do usuário
-  - [ ] Aplicar traduções em todas as telas e componentes
   - [ ] Validar traduções em todos os idiomas
 
 **Checkpoint:** Internacionalização funcionando (pt-BR, es, en)

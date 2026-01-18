@@ -28,7 +28,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5"
+            className="block text-body-sm font-medium text-gray-900 dark:text-gray-50 mb-2"
           >
             {label}
           </label>
@@ -39,20 +39,22 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             id={selectId}
             className={`
               w-full
-              px-4 py-2.5
-              bg-white dark:bg-gray-800
-              border rounded-lg
-              text-gray-900 dark:text-gray-100
-              transition-colors duration-200
+              h-10
+              px-4
+              pr-10
+              bg-white dark:bg-[#141414]
+              border rounded-md
+              text-body text-gray-900 dark:text-gray-50
+              transition-all duration-fast
               focus:outline-none focus:ring-2 focus:ring-offset-0
               appearance-none
               cursor-pointer
               ${
                 hasError
-                  ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-                  : 'border-gray-200 dark:border-gray-700 focus:ring-primary focus:border-primary'
+                  ? 'border-error-500 focus:ring-error-500 focus:border-error-500'
+                  : 'border-gray-200 dark:border-gray-800 focus:ring-primary-500 focus:border-primary-500'
               }
-              disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 dark:disabled:bg-gray-900
+              disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-[#1F1F1F]
               ${className}
             `}
             {...props}
@@ -71,7 +73,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           {/* Dropdown arrow icon */}
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
             <svg
-              className="w-5 h-5 text-gray-400"
+              className="w-5 h-5 text-gray-400 dark:text-gray-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -82,10 +84,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </div>
         </div>
         {helperText && !error && (
-          <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">{helperText}</p>
+          <p className="mt-1.5 text-caption text-gray-500 dark:text-gray-400">{helperText}</p>
         )}
         {error && (
-          <p className="mt-1.5 text-sm text-red-500">{error}</p>
+          <p className="mt-1.5 text-caption text-error-500">{error}</p>
         )}
       </div>
     )

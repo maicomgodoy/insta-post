@@ -52,8 +52,8 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Carregando...</div>
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] flex items-center justify-center">
+        <div className="text-body text-gray-500 dark:text-gray-400">Carregando...</div>
       </div>
     )
   }
@@ -63,24 +63,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A]">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="bg-white dark:bg-[#141414] rounded-lg shadow-md p-8 border border-gray-200 dark:border-gray-800">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600 mt-1">Bem-vindo, {user.email}!</p>
+              <h1 className="text-h1 font-bold text-gray-900 dark:text-gray-50">Dashboard</h1>
+              <p className="text-body-lg text-gray-500 dark:text-gray-400 mt-1">Bem-vindo, {user.email}!</p>
             </div>
             <button
               onClick={handleLogout}
-              className="text-gray-600 hover:text-gray-900 px-4 py-2 rounded-lg border border-gray-300 hover:border-primary transition-colors"
+              className="text-body text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-50 px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 hover:border-primary-500 transition-colors"
             >
               Sair
             </button>
           </div>
 
-          <div className="border-t border-gray-200 pt-6">
-            <p className="text-gray-600">
+          <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
+            <p className="text-body text-gray-500 dark:text-gray-400">
               Dashboard em construção. Autenticação funcionando! ✅
             </p>
           </div>

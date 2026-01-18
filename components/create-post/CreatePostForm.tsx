@@ -1,13 +1,26 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Card, Select, Textarea, Button, FormField } from '@/components/ui'
 import { useToast } from '@/components/ui/Toast'
+import { useAuth } from '@/hooks/useAuth'
+
+// Simple logger for client-side errors
+const logger = {
+  error: (message: string, data?: Record<string, unknown>) => {
+    console.error(`[CreatePostForm] ${message}`, data)
+  },
+}
 
 export function CreatePostForm() {
   const t = useTranslations('createPost')
   const { addToast } = useToast()
+  const router = useRouter()
+  const params = useParams()
+  const { user } = useAuth()
+  const locale = (params?.locale as string) || 'pt-BR'
 
   // Form state
   const [niche, setNiche] = useState('')
@@ -53,8 +66,18 @@ export function CreatePostForm() {
     if (!niche || !postType || !tone || !themeOrIdea.trim()) {
       addToast({
         type: 'error',
-        title: 'Validation Error',
-        message: 'Please fill in all fields',
+        title: t('validationError'),
+        message: t('fillAllFields'),
+      })
+      return
+    }
+
+    // Check if user is authenticated
+    if (!user) {
+      addToast({
+        type: 'error',
+        title: t('authError'),
+        message: t('pleaseLogin'),
       })
       return
     }
@@ -62,13 +85,38 @@ export function CreatePostForm() {
     setIsLoading(true)
 
     try {
-      // TODO: Implement API call to generate post
-      await new Promise((resolve) => setTimeout(resolve, 2000)) // Simulated delay
+      // Get auth token
+      const token = localStorage.getItem('access_token')
+      if (!token) {
+        throw new Error('No authentication token')
+      }
+
+      // Call API to generate post
+      const response = await fetch('/api/posts/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          niche,
+          postType,
+          tone,
+          themeOrIdea,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to generate post')
+      }
+
+      const data = await response.json()
       
       addToast({
         type: 'success',
-        title: 'Post Generated!',
-        message: 'Your post has been created successfully.',
+        title: t('successTitle'),
+        message: t('successMessage'),
       })
       
       // Reset form
@@ -76,11 +124,16 @@ export function CreatePostForm() {
       setPostType('')
       setTone('')
       setThemeOrIdea('')
+
+      // Redirect to My Posts (editor page will be created later)
+      // TODO: Redirect to editor when it's implemented: `/${locale}/editor/${data.post.id}`
+      router.push(`/${locale}/my-posts`)
     } catch (error) {
+      logger.error('Failed to generate post', { error: (error as Error).message })
       addToast({
         type: 'error',
-        title: 'Error',
-        message: 'Failed to generate post. Please try again.',
+        title: t('errorTitle'),
+        message: error instanceof Error ? error.message : t('errorMessage'),
       })
     } finally {
       setIsLoading(false)

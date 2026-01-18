@@ -52,16 +52,16 @@ function NavLink({ href, icon, label, isActive }: { href: string; icon: ReactNod
     <Link
       href={href}
       className={`
-        flex items-center gap-3 px-4 py-3 rounded-lg
-        transition-all duration-200
+        flex items-center gap-3 px-4 py-2.5 rounded-md
+        transition-all duration-fast
         ${isActive
-          ? 'bg-primary text-white'
-          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'
+          ? 'bg-primary-500 text-white'
+          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1F1F1F] hover:text-gray-900 dark:hover:text-gray-50'
         }
       `}
     >
       {icon}
-      <span className="font-medium">{label}</span>
+      <span className="font-medium text-body-sm">{label}</span>
     </Link>
   )
 }
@@ -78,19 +78,19 @@ export function Sidebar({ locale }: SidebarProps) {
   ]
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col">
+    <aside className="fixed left-0 top-0 h-screen w-60 bg-white dark:bg-[#141414] border-r border-gray-200 dark:border-gray-800 flex flex-col z-50">
       {/* Logo */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-        <Link href={`/${locale}/dashboard`} className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">I</span>
+      <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-800">
+        <Link href={`/${locale}/dashboard`} className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-primary-500 rounded-md flex items-center justify-center">
+            <span className="text-white font-bold text-body-lg">I</span>
           </div>
-          <span className="text-xl font-bold text-gray-900 dark:text-white">Insta Post</span>
+          <span className="text-h4 font-bold text-gray-900 dark:text-gray-50">Insta Post</span>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.href}
@@ -103,22 +103,24 @@ export function Sidebar({ locale }: SidebarProps) {
       </nav>
 
       {/* Bottom section */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-800 space-y-4">
+      <div className="px-3 py-4 border-t border-gray-200 dark:border-gray-800 space-y-3">
         {/* Theme toggle */}
-        <ThemeToggle showLabel={false} className="w-full justify-center" />
+        <div className="flex justify-center">
+          <ThemeToggle showLabel={false} />
+        </div>
         
         {/* User info placeholder */}
-        <div className="flex items-center gap-3 px-2 py-2">
-          <div className="w-9 h-9 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+        <div className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-[#1F1F1F] transition-colors duration-fast">
+          <div className="w-9 h-9 bg-gray-200 dark:bg-[#1F1F1F] rounded-full flex items-center justify-center flex-shrink-0">
             <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+            <p className="text-body-sm font-medium text-gray-900 dark:text-gray-50 truncate">
               User
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+            <p className="text-caption text-gray-500 dark:text-gray-400 truncate">
               Free Plan
             </p>
           </div>

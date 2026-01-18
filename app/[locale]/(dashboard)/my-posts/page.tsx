@@ -17,31 +17,33 @@ export default function MyPostsPage() {
   return (
     <div className="space-y-8">
       {/* Page header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          {t('myPosts')}
-        </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Veja e gerencie todos os seus posts criados.
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-h1 font-bold text-gray-900 dark:text-gray-50">
+            {t('myPosts')}
+          </h1>
+          <p className="mt-2 text-body-lg text-gray-500 dark:text-gray-400">
+            Veja e gerencie todos os seus posts criados.
+          </p>
+        </div>
+        <Link href={`/${locale}/create-post`}>
+          <Button variant="primary" size="lg">
+            Criar Post
+          </Button>
+        </Link>
       </div>
 
       {/* Posts list or empty state */}
       {posts.length === 0 ? (
-        <Card>
+        <Card padding="lg">
           <Empty
             title={tEmpty('noPosts')}
-            message="Comece criando seu primeiro post com IA."
+            message="Comece criando seu primeiro post com IA. É rápido e fácil!"
             action={{
-              label: 'Criar Post',
-              onClick: () => {},
+              label: 'Criar Primeiro Post',
+              onClick: () => window.location.href = `/${locale}/create-post`,
             }}
           />
-          <div className="flex justify-center -mt-4 mb-4">
-            <Link href={`/${locale}/create-post`}>
-              <Button variant="primary">Criar Post</Button>
-            </Link>
-          </div>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

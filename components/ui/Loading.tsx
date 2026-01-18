@@ -16,7 +16,7 @@ export function Loading({ size = 'md', className = '', text }: LoadingProps) {
   return (
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
       <svg
-        className={`animate-spin text-primary ${sizeStyles[size]}`}
+        className={`animate-spin text-primary-500 ${sizeStyles[size]}`}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -36,7 +36,7 @@ export function Loading({ size = 'md', className = '', text }: LoadingProps) {
         />
       </svg>
       {text && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">{text}</p>
+        <p className="text-body-sm text-gray-500 dark:text-gray-400">{text}</p>
       )}
     </div>
   )
@@ -47,7 +47,7 @@ export function Loading({ size = 'md', className = '', text }: LoadingProps) {
  */
 export function LoadingPage({ text }: { text?: string }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0A0A0A]">
       <Loading size="lg" text={text} />
     </div>
   )
@@ -58,7 +58,7 @@ export function LoadingPage({ text }: { text?: string }) {
  */
 export function LoadingOverlay({ text }: { text?: string }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-900/80 z-10">
+    <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-sm z-10">
       <Loading size="md" text={text} />
     </div>
   )

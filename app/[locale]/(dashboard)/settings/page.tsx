@@ -31,28 +31,28 @@ export default function SettingsPage() {
     <div className="space-y-8">
       {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-h1 font-bold text-gray-900 dark:text-gray-50">
           {t('title')}
         </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
+        <p className="mt-2 text-body-lg text-gray-500 dark:text-gray-400">
           Personalize sua experiência no Insta Post.
         </p>
       </div>
 
       {/* Appearance settings */}
-      <Card>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+      <Card padding="lg">
+        <h2 className="text-h3 font-semibold text-gray-900 dark:text-gray-50 mb-6">
           Aparência
         </h2>
         
         <div className="space-y-6">
           {/* Theme */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <p className="font-medium text-gray-900 dark:text-white">
+              <p className="text-body font-medium text-gray-900 dark:text-gray-50 mb-1">
                 {t('theme')}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-body-sm text-gray-500 dark:text-gray-400">
                 Escolha entre modo claro ou escuro
               </p>
             </div>
@@ -60,12 +60,12 @@ export default function SettingsPage() {
           </div>
 
           {/* Language */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <p className="font-medium text-gray-900 dark:text-white">
+              <p className="text-body font-medium text-gray-900 dark:text-gray-50 mb-1">
                 {t('language')}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-body-sm text-gray-500 dark:text-gray-400">
                 Selecione o idioma da interface
               </p>
             </div>
@@ -81,36 +81,36 @@ export default function SettingsPage() {
       </Card>
 
       {/* Account settings */}
-      <Card>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+      <Card padding="lg">
+        <h2 className="text-h3 font-semibold text-gray-900 dark:text-gray-50 mb-6">
           {t('account')}
         </h2>
         
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <p className="font-medium text-gray-900 dark:text-white">
+              <p className="text-body font-medium text-gray-900 dark:text-gray-50 mb-1">
                 E-mail
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-body-sm text-gray-500 dark:text-gray-400">
                 usuario@email.com
               </p>
             </div>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="md">
               Alterar
             </Button>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <p className="font-medium text-gray-900 dark:text-white">
+              <p className="text-body font-medium text-gray-900 dark:text-gray-50 mb-1">
                 Senha
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-body-sm text-gray-500 dark:text-gray-400">
                 ••••••••
               </p>
             </div>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="md">
               Alterar
             </Button>
           </div>

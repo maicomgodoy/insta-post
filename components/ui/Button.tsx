@@ -15,41 +15,48 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: `
-    bg-primary text-white
-    hover:bg-blue-700
-    focus:ring-2 focus:ring-primary focus:ring-offset-2
-    dark:focus:ring-offset-gray-900
+    bg-primary-500 text-white
+    hover:bg-primary-600
+    active:bg-primary-700
+    focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+    dark:focus:ring-offset-[#0A0A0A]
   `,
   secondary: `
     bg-gray-100 text-gray-900
     hover:bg-gray-200
-    dark:bg-gray-700 dark:text-gray-100
-    dark:hover:bg-gray-600
+    active:bg-gray-300
+    dark:bg-[#1F1F1F] dark:text-gray-50
+    dark:hover:bg-[#262626]
+    dark:active:bg-[#2A2A2A]
     focus:ring-2 focus:ring-gray-300 focus:ring-offset-2
-    dark:focus:ring-offset-gray-900
+    dark:focus:ring-offset-[#0A0A0A]
   `,
   outline: `
     bg-transparent text-gray-700 border border-gray-300
-    hover:bg-gray-50
-    dark:text-gray-200 dark:border-gray-600
-    dark:hover:bg-gray-800
-    focus:ring-2 focus:ring-primary focus:ring-offset-2
-    dark:focus:ring-offset-gray-900
+    hover:bg-gray-50 hover:border-gray-400
+    active:bg-gray-100
+    dark:text-gray-200 dark:border-gray-700
+    dark:hover:bg-[#1F1F1F] dark:hover:border-gray-600
+    dark:active:bg-[#262626]
+    focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+    dark:focus:ring-offset-[#0A0A0A]
   `,
   ghost: `
     bg-transparent text-gray-700
     hover:bg-gray-100
+    active:bg-gray-200
     dark:text-gray-200
-    dark:hover:bg-gray-800
+    dark:hover:bg-[#1F1F1F]
+    dark:active:bg-[#262626]
     focus:ring-2 focus:ring-gray-300 focus:ring-offset-2
-    dark:focus:ring-offset-gray-900
+    dark:focus:ring-offset-[#0A0A0A]
   `,
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
+  sm: 'h-8 px-3 text-body-sm',
+  md: 'h-10 px-4 text-body',
+  lg: 'h-12 px-6 text-body',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -75,8 +82,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={`
           inline-flex items-center justify-center
           font-medium
-          rounded-lg
-          transition-all duration-200
+          rounded-md
+          transition-all duration-fast
           focus:outline-none
           ${variantStyles[variant]}
           ${sizeStyles[size]}

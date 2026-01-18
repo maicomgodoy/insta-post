@@ -22,16 +22,16 @@ export function Empty({
   className = '',
 }: EmptyProps) {
   return (
-    <div className={`flex flex-col items-center justify-center text-center p-6 ${className}`}>
+    <div className={`flex flex-col items-center justify-center text-center p-8 md:p-12 ${className}`}>
       {/* Default icon or custom icon */}
       {icon || (
-        <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+        <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-[#1F1F1F] flex items-center justify-center mb-6">
           <svg
-            className="w-6 h-6 text-gray-400"
+            className="w-8 h-8 text-gray-400 dark:text-gray-500"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            strokeWidth={2}
+            strokeWidth={1.5}
           >
             <path
               strokeLinecap="round"
@@ -42,16 +42,16 @@ export function Empty({
         </div>
       )}
       
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+      <h3 className="text-h3 font-semibold text-gray-900 dark:text-gray-50 mb-2">
         {title}
       </h3>
       
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 max-w-sm">
+      <p className="text-body text-gray-500 dark:text-gray-400 mb-6 max-w-md">
         {message}
       </p>
       
       {action && (
-        <Button variant="primary" size="sm" onClick={action.onClick}>
+        <Button variant="primary" size="md" onClick={action.onClick}>
           {action.label}
         </Button>
       )}
