@@ -68,7 +68,7 @@ export const POST = withAuthAndParams<{ id: string }>(async (request, user, para
       }
       
       // Se o token é válido, tentar obter informações do perfil para confirmação
-      let profile = null
+      let profile: { id: string; username: string } | null = null
       try {
         profile = await instagramService.getProfile(account.accessToken)
       } catch {
