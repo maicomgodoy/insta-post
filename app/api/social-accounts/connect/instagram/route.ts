@@ -30,11 +30,13 @@ export const GET = withAuth(async (request: NextRequest, user) => {
     })).toString('base64')
     
     // Permissões necessárias para Instagram Graph API (via Facebook)
+    // Scopes atualizados para New Page Experience (NPE) + Business Manager
     const scopes = [
-      'instagram_basic',
-      'instagram_content_publish',
-      'pages_show_list',
-      'pages_read_engagement',
+      'pages_show_list',           // Listar páginas do usuário
+      'pages_read_engagement',     // Ler dados de engajamento das páginas
+      'instagram_basic',           // Acesso básico ao Instagram
+      'instagram_manage_insights', // Gerenciar insights do Instagram
+      'business_management',       // Acesso a Business Manager (necessário para /me/businesses)
     ].join(',')
     
     // URL de autorização do Facebook (para Instagram Business/Creator accounts)
