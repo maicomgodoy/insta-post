@@ -62,7 +62,7 @@ function AuthFormContent({ mode }: AuthFormProps) {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:border-primary focus-visible:ring-0 outline-none transition-colors"
           placeholder="seu@email.com"
         />
       </div>
@@ -79,7 +79,7 @@ function AuthFormContent({ mode }: AuthFormProps) {
             minLength={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+            className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:border-primary focus-visible:ring-0 outline-none transition-colors"
             placeholder={mode === 'signup' ? 'Mínimo 6 caracteres' : 'Sua senha'}
           />
           <button

@@ -22,10 +22,10 @@ export default function AuthPage() {
             <button
               type="button"
               onClick={() => setMode('signup')}
-              className={`flex-1 py-3 px-4 text-center font-semibold transition-colors ${
+              className={`flex-1 py-3 px-4 text-center font-semibold transition-colors focus:outline-none ${
                 mode === 'signup'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'text-gray-900 border-b-2 border-primary bg-gray-100 focus:bg-gray-200'
+                  : 'text-gray-600 hover:text-gray-900 focus:bg-gray-100'
               }`}
             >
               Criar conta
@@ -33,10 +33,10 @@ export default function AuthPage() {
             <button
               type="button"
               onClick={() => setMode('login')}
-              className={`flex-1 py-3 px-4 text-center font-semibold transition-colors ${
+              className={`flex-1 py-3 px-4 text-center font-semibold transition-colors focus:outline-none ${
                 mode === 'login'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'text-gray-900 border-b-2 border-primary bg-gray-100 focus:bg-gray-200'
+                  : 'text-gray-600 hover:text-gray-900 focus:bg-gray-100'
               }`}
             >
               Entrar
