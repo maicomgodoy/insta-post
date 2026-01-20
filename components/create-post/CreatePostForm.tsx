@@ -125,9 +125,8 @@ export function CreatePostForm() {
       setTone('')
       setThemeOrIdea('')
 
-      // Redirect to My Posts (editor page will be created later)
-      // TODO: Redirect to editor when it's implemented: `/${locale}/editor/${data.post.id}`
-      router.push(`/${locale}/my-posts`)
+      // Redirect to editor to review and edit the generated post
+      router.push(`/${locale}/editor/${data.post.id}`)
     } catch (error) {
       logger.error('Failed to generate post', { error: (error as Error).message })
       addToast({

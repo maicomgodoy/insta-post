@@ -138,6 +138,44 @@ FOR DELETE
 USING (auth.uid()::text = user_id);
 
 -- ============================================
+-- 7. TABELA: rejected_images
+-- ============================================
+-- Habilitar RLS
+ALTER TABLE rejected_images ENABLE ROW LEVEL SECURITY;
+
+-- Política: Usuários podem ler suas próprias imagens rejeitadas
+CREATE POLICY "Users can read their own rejected images"
+ON rejected_images
+FOR SELECT
+USING (auth.uid()::text = user_id);
+
+-- Política: Usuários podem criar suas próprias imagens rejeitadas
+CREATE POLICY "Users can create their own rejected images"
+ON rejected_images
+FOR INSERT
+WITH CHECK (auth.uid()::text = user_id);
+
+-- Política: Usuários podem deletar suas próprias imagens rejeitadas
+CREATE POLICY "Users can delete their own rejected images"
+ON rejected_images
+FOR DELETE
+USING (auth.uid()::text = user_id);
+
+-- ============================================
+-- 8. TABELA: research_cache
+-- ============================================
+-- Habilitar RLS
+ALTER TABLE research_cache ENABLE ROW LEVEL SECURITY;
+
+-- Política: Cache de pesquisa é público para leitura (para evitar pesquisas duplicadas)
+CREATE POLICY "Anyone can read research cache"
+ON research_cache
+FOR SELECT
+USING (true);
+
+-- Nota: Criar/atualizar/deletar cache é feito pelo backend (service_role)
+
+-- ============================================
 -- RESUMO DAS POLÍTICAS
 -- ============================================
 -- users: SELECT, INSERT, UPDATE (próprios dados)
@@ -146,4 +184,6 @@ USING (auth.uid()::text = user_id);
 -- credits: SELECT (próprios créditos)
 -- posts: SELECT, INSERT, UPDATE, DELETE (próprios posts)
 -- social_accounts: SELECT, INSERT, UPDATE, DELETE (próprias contas)
+-- rejected_images: SELECT, INSERT, DELETE (próprias imagens rejeitadas)
+-- research_cache: SELECT (público, para evitar duplicação de pesquisas)
 -- ============================================

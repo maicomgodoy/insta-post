@@ -12,6 +12,9 @@ const generatePostSchema = z.object({
   tone: z.string().min(1, 'Tom é obrigatório'),
   themeOrIdea: z.string().min(1, 'Tema ou ideia é obrigatório'),
   socialAccountId: z.string().uuid('ID da conta social inválido').optional(),
+  // Novos campos opcionais para integração com pesquisa de temas
+  suggestedHashtags: z.array(z.string()).optional(),
+  suggestedTerms: z.array(z.string()).optional(),
 })
 
 /**
@@ -27,7 +30,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
       return validationErrorResponse(validation.error)
     }
     
-    const { niche, postType, tone, themeOrIdea, socialAccountId } = validation.data
+    const { niche, postType, tone, themeOrIdea, socialAccountId, suggestedHashtags, suggestedTerms } = validation.data
     
     // Se socialAccountId fornecido, verificar se pertence ao usuário
     if (socialAccountId) {
@@ -55,15 +58,28 @@ export const POST = withAuth(async (request: NextRequest, user) => {
     
     // Por enquanto, criar post mock com dados placeholder
     const mockImageUrl = 'https://via.placeholder.com/1080x1080?text=Post+Image'
-    const mockCaption = `[${niche}] ${postType} - ${tone}\n\n${themeOrIdea}\n\n#${niche} #${postType} #${tone}`
+    
+    // Legenda e hashtags separados
+    const mockCaption = `[${niche}] ${postType} - ${tone}\n\n${themeOrIdea}`
+    
+    // Usar hashtags sugeridas se fornecidas, senão criar padrão
+    let mockHashtags = ''
+    if (suggestedHashtags && suggestedHashtags.length > 0) {
+      mockHashtags = suggestedHashtags.map(h => h.startsWith('#') ? h : `#${h}`).join(' ')
+    } else {
+      mockHashtags = `#${niche.replace(/\s+/g, '')} #${postType.replace(/\s+/g, '')} #${tone.replace(/\s+/g, '')}`
+    }
     
     const post = await prisma.post.create({
       data: {
         userId: user.id,
         imageUrl: mockImageUrl,
         caption: mockCaption,
+        hashtags: mockHashtags,
         socialAccountId: socialAccountId || null,
         status: 'draft',
+        version: 1,
+        editHistory: [],
       },
       include: {
         socialAccount: {
@@ -85,7 +101,9 @@ export const POST = withAuth(async (request: NextRequest, user) => {
           id: post.id,
           imageUrl: post.imageUrl,
           caption: post.caption,
+          hashtags: post.hashtags,
           status: post.status,
+          version: post.version,
           scheduledFor: post.scheduledFor,
           publishedAt: post.publishedAt,
           socialAccount: post.socialAccount,

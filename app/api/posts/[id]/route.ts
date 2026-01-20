@@ -12,7 +12,8 @@ const postIdSchema = z.object({
 const updatePostSchema = z.object({
   imageUrl: z.string().url('URL da imagem inválida').optional(),
   caption: z.string().min(1, 'Legenda é obrigatória').max(2200, 'Legenda muito longa').optional(),
-  status: z.enum(['draft', 'scheduled', 'published', 'failed']).optional(),
+  hashtags: z.string().max(1000, 'Hashtags muito longas').optional(),
+  status: z.enum(['draft', 'editing', 'ready', 'scheduled', 'published', 'failed']).optional(),
   scheduledFor: z.string().datetime().optional().nullable(),
   socialAccountId: z.string().uuid('ID da conta social inválido').optional().nullable(),
 })
@@ -58,7 +59,10 @@ export const GET = withAuthAndParams<{ id: string }>(async (request, user, param
         id: post.id,
         imageUrl: post.imageUrl,
         caption: post.caption,
+        hashtags: post.hashtags,
         status: post.status,
+        version: post.version,
+        parentPostId: post.parentPostId,
         scheduledFor: post.scheduledFor,
         publishedAt: post.publishedAt,
         instagramPostId: post.instagramPostId,
@@ -94,7 +98,7 @@ export const PUT = withAuthAndParams<{ id: string }>(async (request, user, param
       return validationErrorResponse(bodyValidation.error)
     }
     
-    const { imageUrl, caption, status, scheduledFor, socialAccountId } = bodyValidation.data
+    const { imageUrl, caption, hashtags, status, scheduledFor, socialAccountId } = bodyValidation.data
     
     // Verificar se o post existe e pertence ao usuário
     const existingPost = await prisma.post.findFirst({
@@ -141,6 +145,7 @@ export const PUT = withAuthAndParams<{ id: string }>(async (request, user, param
     const updateData: Record<string, unknown> = {}
     if (imageUrl !== undefined) updateData.imageUrl = imageUrl
     if (caption !== undefined) updateData.caption = caption
+    if (hashtags !== undefined) updateData.hashtags = hashtags
     if (status !== undefined) updateData.status = status
     if (scheduledFor !== undefined) updateData.scheduledFor = scheduledFor ? new Date(scheduledFor) : null
     if (socialAccountId !== undefined) updateData.socialAccountId = socialAccountId
@@ -167,7 +172,9 @@ export const PUT = withAuthAndParams<{ id: string }>(async (request, user, param
         id: post.id,
         imageUrl: post.imageUrl,
         caption: post.caption,
+        hashtags: post.hashtags,
         status: post.status,
+        version: post.version,
         scheduledFor: post.scheduledFor,
         publishedAt: post.publishedAt,
         socialAccount: post.socialAccount,

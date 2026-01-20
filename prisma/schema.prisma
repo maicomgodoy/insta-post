@@ -27,6 +27,7 @@ model User {
   credits       Credit[]
   posts         Post[]
   socialAccounts SocialAccount[]
+  rejectedImages RejectedImage[]
   
   @@map("users")
 }
@@ -94,8 +95,13 @@ model Post {
   userId          String   @map("user_id")
   socialAccountId String?  @map("social_account_id") // null se não foi publicado
   imageUrl        String   @map("image_url") // URL da imagem no Cloudflare R2
-  caption         String   // Legenda do post
-  status          String   @default("draft") // "draft", "scheduled", "published", "failed"
+  caption         String   // Legenda do post (sem hashtags)
+  hashtags        String   @default("") // Hashtags separadas
+  status          String   @default("draft") // "draft", "editing", "ready", "scheduled", "published", "failed"
+  parentPostId    String?  @map("parent_post_id") @db.Text // Para rastrear versões/edições
+  rejectedImageUrl String? @map("rejected_image_url") // Imagem anterior não aprovada
+  version         Int      @default(1) // Versão do post
+  editHistory     Json?    @map("edit_history") // Histórico de edições
   publishedAt     DateTime? @map("published_at") // Quando foi publicado
   scheduledFor    DateTime? @map("scheduled_for") // Quando está agendado para publicar
   instagramPostId String?  @map("instagram_post_id") // ID do post no Instagram (se publicado)
@@ -105,11 +111,46 @@ model Post {
   // Relacionamentos
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   socialAccount   SocialAccount? @relation(fields: [socialAccountId], references: [id], onDelete: SetNull)
+  rejectedImages  RejectedImage[]
   
   @@index([userId])
   @@index([status])
   @@index([scheduledFor])
   @@map("posts")
+}
+
+// Tabela de Imagens Rejeitadas (para reutilização futura)
+model RejectedImage {
+  id              String   @id @default(uuid()) @db.Text
+  userId          String   @map("user_id") @db.Text
+  postId          String?  @map("post_id") @db.Text // Post original (opcional)
+  imageUrl        String   @map("image_url") @db.Text
+  caption         String?  @db.Text // Legenda original (opcional)
+  hashtags        String?  @db.Text // Hashtags originais (opcional)
+  rejectedAt      DateTime @default(now()) @map("rejected_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  
+  // Relacionamentos
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post            Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@map("rejected_images")
+}
+
+// Tabela de Cache de Pesquisas (hashtags, termos, temas em alta)
+model ResearchCache {
+  id              String   @id @default(uuid())
+  niche           String?  // Nicho pesquisado (opcional para temas)
+  theme           String?  // Tema pesquisado (opcional, usado para trending topics)
+  researchType    String   @map("research_type") // "hashtags", "caption_terms" ou "trending_topics"
+  data            Json     // Dados da pesquisa
+  expiresAt       DateTime @map("expires_at") // Cache expira em 24h (temas) ou 12h (hashtags/termos)
+  createdAt       DateTime @default(now()) @map("created_at")
+  
+  @@unique([niche, theme, researchType])
+  @@index([expiresAt])
+  @@map("research_cache")
 }
 
 // Tabela de Contas Sociais Conectadas

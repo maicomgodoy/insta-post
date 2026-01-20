@@ -5,6 +5,7 @@ import { logger } from '@/lib/logger'
 import { instagramService } from '@/lib/services/instagram-service'
 import { withAuthAndParams } from '@/middleware/api-auth'
 import { validateBody, validateParams, validationErrorResponse } from '@/middleware/api-validation'
+import { joinCaptionAndHashtags } from '@/lib/utils/caption-parser'
 
 const postIdSchema = z.object({
   id: z.string().uuid('ID do post inválido'),
@@ -83,12 +84,15 @@ export const POST = withAuthAndParams<{ id: string }>(async (request, user, para
     }
     
     try {
+      // Unir caption e hashtags para publicação no Instagram
+      const fullCaption = joinCaptionAndHashtags(post.caption, post.hashtags)
+      
       // Publicar no Instagram
       const instagramPostId = await instagramService.publishPost(
         socialAccount.accessToken,
         socialAccount.accountId,
         post.imageUrl,
-        post.caption
+        fullCaption
       )
       
       // Atualizar post no banco
@@ -124,7 +128,9 @@ export const POST = withAuthAndParams<{ id: string }>(async (request, user, para
           id: updatedPost.id,
           imageUrl: updatedPost.imageUrl,
           caption: updatedPost.caption,
+          hashtags: updatedPost.hashtags,
           status: updatedPost.status,
+          version: updatedPost.version,
           publishedAt: updatedPost.publishedAt,
           instagramPostId: updatedPost.instagramPostId,
           socialAccount: updatedPost.socialAccount,
