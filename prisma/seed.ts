@@ -1,20 +1,22 @@
+import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 /**
  * Seed de planos
- * 
- * IMPORTANTE: Antes de executar este seed, você precisa:
- * 1. Criar os produtos e preços no Stripe
- * 2. Obter os price IDs do Stripe
- * 3. Atualizar os stripePriceId abaixo com os IDs reais
- * 
- * Para criar produtos/preços no Stripe:
- * - Via Dashboard: https://dashboard.stripe.com/products
- * - Via CLI: stripe products create / stripe prices create
- * - Via API: usar a biblioteca do Stripe
+ *
+ * Stripe Price IDs: definidos via variáveis de ambiente (Opção B).
+ * STRIPE_PRICE_STARTER, STRIPE_PRICE_PRO, STRIPE_PRICE_PREMIUM, STRIPE_PRICE_AGENCY.
+ * Se não definidas, os planos são criados com stripePriceId null (checkout não funcionará).
+ *
+ * Ver: .env.example e docs/CONFIG-OPCAO-B.md
  */
+
+function getStripePriceId(envKey: string): string | null {
+  const v = process.env[envKey]
+  return v && v.trim().length > 0 ? v.trim() : null
+}
 
 const plans = [
   {
@@ -24,7 +26,7 @@ const plans = [
     allowsScheduling: false,
     maxScheduledPosts: null,
     allowsMultipleAccounts: false,
-    stripePriceId: null, // TODO: Preencher após criar no Stripe
+    stripePriceId: getStripePriceId('STRIPE_PRICE_STARTER'),
   },
   {
     name: 'pro',
@@ -33,30 +35,37 @@ const plans = [
     allowsScheduling: true,
     maxScheduledPosts: 10,
     allowsMultipleAccounts: false,
-    stripePriceId: null, // TODO: Preencher após criar no Stripe
+    stripePriceId: getStripePriceId('STRIPE_PRICE_PRO'),
   },
   {
     name: 'premium',
     displayName: 'Premium',
     monthlyCredits: 120,
     allowsScheduling: true,
-    maxScheduledPosts: null, // null = ilimitado
+    maxScheduledPosts: null,
     allowsMultipleAccounts: false,
-    stripePriceId: null, // TODO: Preencher após criar no Stripe
+    stripePriceId: getStripePriceId('STRIPE_PRICE_PREMIUM'),
   },
   {
     name: 'agency',
     displayName: 'Agência',
     monthlyCredits: 300,
     allowsScheduling: true,
-    maxScheduledPosts: null, // null = ilimitado
+    maxScheduledPosts: null,
     allowsMultipleAccounts: true,
-    stripePriceId: null, // TODO: Preencher após criar no Stripe
+    stripePriceId: getStripePriceId('STRIPE_PRICE_AGENCY'),
   },
 ]
 
 async function main() {
   console.log('🌱 Seeding plans...')
+
+  const missingPrices = plans.filter((p) => !(p.stripePriceId ?? null))
+  if (missingPrices.length > 0) {
+    console.log(
+      `  ⚠ ${missingPrices.length} plano(s) sem STRIPE_PRICE_* definido(s). Defina no .env e rode o seed novamente para ativar checkout.`
+    )
+  }
 
   for (const planData of plans) {
     const existingPlan = await prisma.plan.findFirst({
