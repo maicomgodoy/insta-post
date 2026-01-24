@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
 import { withAuthAndParams } from '@/middleware/api-auth'
@@ -109,8 +110,8 @@ export const POST = withAuthAndParams<{ id: string }>(async (request, user, para
     }
 
     // Atualizar histórico de edições
-    const editHistory = (post.editHistory as unknown[] || [])
-    editHistory.push({
+    const currentEditHistory = (post.editHistory as Array<Record<string, unknown>> | null) || []
+    const newEditEntry = {
       version: post.version,
       editType,
       instructions: instructions || null,
@@ -118,7 +119,8 @@ export const POST = withAuthAndParams<{ id: string }>(async (request, user, para
       previousCaption: post.caption,
       previousHashtags: post.hashtags,
       previousImageUrl: post.imageUrl,
-    })
+    }
+    const editHistory = [...currentEditHistory, newEditEntry] as Prisma.InputJsonValue
 
     // Atualizar post
     const updatedPost = await prisma.post.update({

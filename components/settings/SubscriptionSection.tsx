@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { Card, Button, Loading, Error } from '@/components/ui'
+import { Card, Button, Loading, Error as ErrorComponent } from '@/components/ui'
 import { useToast } from '@/components/ui/Toast'
 import { useParams } from 'next/navigation'
 
@@ -62,7 +62,7 @@ export function SubscriptionSection() {
         ])
 
         if (!plansResponse.ok) {
-          throw new globalThis.Error('Failed to fetch plans')
+          throw new Error('Failed to fetch plans')
         }
 
         const plansData = await plansResponse.json()
@@ -73,7 +73,7 @@ export function SubscriptionSection() {
           setSubscription(subscriptionData.subscription)
         }
       } catch (err) {
-        setError(err instanceof globalThis.Error ? err.message : 'Failed to load data')
+        setError(err instanceof Error ? err.message : 'Failed to load data')
       } finally {
         setLoading(false)
       }
@@ -114,7 +114,7 @@ export function SubscriptionSection() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new globalThis.Error(errorData.error || errorData.message || 'Failed to create checkout')
+        throw new Error(errorData.error || errorData.message || 'Failed to create checkout')
       }
 
       const data = await response.json()
@@ -127,7 +127,7 @@ export function SubscriptionSection() {
       addToast({
         type: 'error',
         title: 'Error',
-        message: err instanceof globalThis.Error ? err.message : 'Failed to create checkout',
+        message: err instanceof Error ? err.message : 'Failed to create checkout',
       })
     } finally {
       setProcessingPlanId(null)
@@ -161,7 +161,7 @@ export function SubscriptionSection() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new globalThis.Error(errorData.error || errorData.message || 'Failed to cancel subscription')
+        throw new Error(errorData.error || errorData.message || 'Failed to cancel subscription')
       }
 
       addToast({
@@ -185,7 +185,7 @@ export function SubscriptionSection() {
       addToast({
         type: 'error',
         title: 'Error',
-        message: err instanceof globalThis.Error ? err.message : 'Failed to cancel subscription',
+        message: err instanceof Error ? err.message : 'Failed to cancel subscription',
       })
     } finally {
       setCanceling(false)
@@ -203,7 +203,7 @@ export function SubscriptionSection() {
   if (error) {
     return (
       <Card>
-        <Error title="Error" message={error} />
+        <ErrorComponent title="Error" message={error} />
       </Card>
     )
   }

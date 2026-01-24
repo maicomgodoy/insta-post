@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { Button, Loading, Error } from '@/components/ui'
+import { Button, Loading, Error as ErrorComponent } from '@/components/ui'
 import { PostEditor } from '@/components/editor'
 import { useToast } from '@/components/ui/Toast'
 
@@ -145,13 +145,11 @@ export default function EditorPage() {
   // Render error state
   if (error || !post) {
     return (
-      <Error
+      <ErrorComponent
         title={t('postNotFound')}
         message={error || t('postNotFoundMessage')}
-        action={{
-          label: t('backToMyPosts'),
-          onClick: handleBack,
-        }}
+        onRetry={handleBack}
+        retryText={t('backToMyPosts')}
       />
     )
   }

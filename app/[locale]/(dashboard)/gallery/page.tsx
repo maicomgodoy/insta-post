@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { Card, Button, Loading, Empty, Error } from '@/components/ui'
+import { Card, Button, Loading, Empty, Error as ErrorComponent } from '@/components/ui'
 import { useToast } from '@/components/ui/Toast'
 import Image from 'next/image'
 
@@ -190,13 +190,11 @@ export default function GalleryPage() {
   // Render error state
   if (error && images.length === 0) {
     return (
-      <Error
+      <ErrorComponent
         title={t('errorTitle')}
         message={error}
-        action={{
-          label: t('retry'),
-          onClick: () => fetchImages(),
-        }}
+        onRetry={() => fetchImages()}
+        retryText={t('retry')}
       />
     )
   }
@@ -217,7 +215,7 @@ export default function GalleryPage() {
       {images.length === 0 && !isLoading && (
         <Empty
           title={t('emptyTitle')}
-          description={t('emptyDescription')}
+          message={t('emptyDescription')}
           icon={
             <svg
               className="w-16 h-16 text-gray-300 dark:text-gray-600"
@@ -240,33 +238,37 @@ export default function GalleryPage() {
       {images.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {images.map((image) => (
-            <Card
+            <div
               key={image.id}
-              padding="none"
-              className="overflow-hidden group cursor-pointer"
               onClick={() => setSelectedImage(image)}
+              className="cursor-pointer"
             >
-              <div className="relative aspect-square bg-gray-100 dark:bg-gray-800">
-                <Image
-                  src={image.imageUrl}
-                  alt={t('rejectedImage')}
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white font-medium">
-                    {t('clickToView')}
-                  </span>
+              <Card
+                padding="none"
+                className="overflow-hidden group"
+              >
+                <div className="relative aspect-square bg-gray-100 dark:bg-gray-800">
+                  <Image
+                    src={image.imageUrl}
+                    alt={t('rejectedImage')}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white font-medium">
+                      {t('clickToView')}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="p-3">
-                <p className="text-body-xs text-gray-500 dark:text-gray-400">
-                  {formatDate(image.rejectedAt)}
-                </p>
-              </div>
-            </Card>
+                <div className="p-3">
+                  <p className="text-body-xs text-gray-500 dark:text-gray-400">
+                    {formatDate(image.rejectedAt)}
+                  </p>
+                </div>
+              </Card>
+            </div>
           ))}
         </div>
       )}
