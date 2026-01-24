@@ -3,8 +3,53 @@ import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
+import { creditService } from '@/lib/services/credit-service'
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+
+/**
+ * Concede créditos do plano ao assinante para o período atual, se ainda não concedidos.
+ * Usado na assinatura inicial (trialing/active) e em renovações (invoice.payment_succeeded).
+ */
+async function ensureCreditsForPeriod(stripeSubscription: Stripe.Subscription): Promise<void> {
+  const userId = stripeSubscription.metadata?.userId
+  const planId = stripeSubscription.metadata?.planId
+  if (!userId || !planId) return
+
+  const status = stripeSubscription.status
+  if (status !== 'active' && status !== 'trialing') return
+
+  const periodStart = stripeSubscription.current_period_start
+  if (!periodStart) return
+
+  const periodStartDate = new Date(periodStart * 1000)
+
+  const plan = await prisma.plan.findUnique({ where: { id: planId } })
+  if (!plan || plan.monthlyCredits <= 0) return
+
+  const sub = await prisma.subscription.findUnique({ where: { userId } })
+  if (!sub) return
+
+  if (
+    sub.lastCreditPeriodStart &&
+    sub.lastCreditPeriodStart.getTime() === periodStartDate.getTime()
+  ) {
+    logger.debug('Credits already granted for period', { userId, periodStart: periodStartDate })
+    return
+  }
+
+  await creditService.renewMonthlyCredits(userId, plan.monthlyCredits)
+  await prisma.subscription.update({
+    where: { userId },
+    data: { lastCreditPeriodStart: periodStartDate },
+  })
+  logger.info('Credits granted for period', {
+    userId,
+    planId,
+    amount: plan.monthlyCredits,
+    periodStart: periodStartDate,
+  })
+}
 
 /**
  * Sincroniza uma assinatura do Stripe com o banco de dados
@@ -139,6 +184,7 @@ export async function POST(request: NextRequest) {
             session.subscription as string
           )
           await syncSubscription(subscription)
+          await ensureCreditsForPeriod(subscription)
         }
 
         logger.info('Checkout session completed', {
@@ -152,6 +198,7 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription
         await syncSubscription(subscription)
+        await ensureCreditsForPeriod(subscription)
 
         logger.info('Subscription synced via webhook', {
           eventType: event.type,
@@ -192,6 +239,7 @@ export async function POST(request: NextRequest) {
             invoice.subscription as string
           )
           await syncSubscription(subscription)
+          await ensureCreditsForPeriod(subscription)
 
           logger.info('Invoice payment succeeded', {
             invoiceId: invoice.id,

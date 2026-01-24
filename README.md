@@ -238,22 +238,27 @@ Após o usuário fazer login e ter plano ativo ou estar no período de teste gr�
 git clone <repository-url>
 
 # Instale as dependências
-npm install
+pnpm install
 
 # Configure as variáveis de ambiente
 cp .env.example .env
-# Edite o .env com suas credenciais
+# Edite o .env com suas credenciais (Stripe + Instagram: docs/CONFIG-OPCAO-B.md)
 
 # Execute as migrações do Prisma
-npx prisma migrate dev
+pnpm run db:migrate
+# Opcional: seed dos planos (use STRIPE_PRICE_* no .env para checkout)
+pnpm run db:seed
+
+# Verifique variáveis (Opção B)
+pnpm run config:check
 
 # Inicie o servidor de desenvolvimento
-npm run dev
+pnpm dev
 ```
 
 ### Variáveis de Ambiente
 
-Veja `.env.example` para as variáveis necessárias (configuração completa será adicionada conforme desenvolvimento).
+Veja **`.env.example`** para a lista de variáveis. Para configurar Stripe e Instagram (checkout, OAuth, publicação), siga **[docs/CONFIG-OPCAO-B.md](./docs/CONFIG-OPCAO-B.md)**. Rode `pnpm run config:check` para validar se todas as variáveis necessárias estão definidas.
 
 ## 📁 Estrutura do Projeto
 
