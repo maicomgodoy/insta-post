@@ -82,10 +82,76 @@ async function getSupabaseConfig(): Promise<{ url: string; anonKey: string }> {
 /**
  * Cria um cliente Supabase para o frontend
  * Busca credenciais via API autenticada (não usa variáveis públicas)
+ * IMPORTANTE: Configura o token JWT do usuário para Realtime funcionar com RLS
+ * 
+ * O Supabase Realtime precisa do token JWT para verificar políticas RLS.
+ * Sem o token, o Realtime não consegue determinar se o usuário pode receber atualizações.
  */
 async function getSupabaseClient() {
   const config = await getSupabaseConfig()
-  return createClient(config.url, config.anonKey)
+  const token = localStorage.getItem('access_token')
+  
+  if (!token) {
+    throw new Error('No authentication token available')
+  }
+  
+  // Criar cliente Supabase
+  // IMPORTANTE: Para Realtime funcionar com RLS, precisamos configurar o token JWT
+  const client = createClient(config.url, config.anonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+    realtime: {
+      params: {
+        apikey: config.anonKey,
+      },
+    },
+  })
+  
+  // Configurar o token JWT no cliente para Realtime funcionar com RLS
+  // O Supabase Realtime usa o token JWT para verificar políticas RLS
+  // Sem o token configurado, o Realtime não consegue autenticar e verificar RLS
+  try {
+    // Decodificar o token JWT para obter informações
+    const tokenParts = token.split('.')
+    if (tokenParts.length === 3) {
+      const payload = JSON.parse(atob(tokenParts[1]))
+      const expiresAt = payload.exp ? payload.exp * 1000 : Date.now() + 3600000
+      
+      // Configurar a sessão no cliente Supabase
+      // Isso permite que o Realtime use o token JWT para verificar RLS
+      const { data: sessionData, error: sessionError } = await client.auth.setSession({
+        access_token: token,
+        refresh_token: localStorage.getItem('refresh_token') || '',
+        expires_at: expiresAt,
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: {
+          id: payload.sub || '',
+          email: payload.email || '',
+        } as any,
+      } as any)
+      
+      if (sessionError) {
+        console.warn('[useAiJobRealtime] Failed to set session:', sessionError)
+        // Continuar mesmo assim - o header Authorization pode ser suficiente
+      } else {
+        console.log('[useAiJobRealtime] Session configured successfully for Realtime')
+      }
+    }
+  } catch (error) {
+    console.warn('[useAiJobRealtime] Error configuring session:', error)
+    // Continuar mesmo assim - o header Authorization pode ser suficiente para algumas operações
+  }
+  
+  return client
 }
 
 /**
