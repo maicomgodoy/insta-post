@@ -46,20 +46,17 @@ Este documento descreve o estado atual da integração com Instagram e o que foi
 
 ## ⚠️ O que precisa ser configurado
 
-### 1. Variáveis de Ambiente
+### 1. Variáveis de ambiente
 
-Adicione as seguintes variáveis no seu `.env`:
+Adicione ao `.env` (veja `.env.example` e [CONFIG-OPCAO-B.md](./CONFIG-OPCAO-B.md)):
 
 ```env
-# Instagram/Facebook OAuth
 INSTAGRAM_CLIENT_ID=seu_facebook_app_id
 INSTAGRAM_CLIENT_SECRET=seu_facebook_app_secret
 INSTAGRAM_REDIRECT_URI=http://localhost:3000/auth/callback/instagram
-
-# Ou use as variáveis do Facebook (são equivalentes)
-FACEBOOK_APP_ID=seu_facebook_app_id
-FACEBOOK_APP_SECRET=seu_facebook_app_secret
 ```
+
+O app usa `INSTAGRAM_*`; `FACEBOOK_APP_ID` / `FACEBOOK_APP_SECRET` não são usados no código. Opcional: `FACEBOOK_WEBHOOK_VERIFY_TOKEN` para webhook do Facebook.
 
 ### 2. Configuração no Facebook Developer
 

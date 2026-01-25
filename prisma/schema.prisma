@@ -28,6 +28,7 @@ model User {
   posts         Post[]
   socialAccounts SocialAccount[]
   rejectedImages RejectedImage[]
+  aiJobs        AiJob[]
   
   @@map("users")
 }
@@ -178,6 +179,45 @@ model SocialAccount {
 }
 
 // Nota: Posts agendados são gerenciados através do campo scheduledFor na tabela Post
+
+// Tabela de Jobs de IA (geração de imagens, vídeos, etc.)
+// Usada para rastrear status e resultado de jobs assíncronos
+model AiJob {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  triggerRunId    String?  @map("trigger_run_id") // ID da run no Trigger.dev
+  
+  // Tipo e modelo
+  jobType         String   @map("job_type")  // "image_generation", "image_edit", "video_generation"
+  model           String                      // "nano-banana", "nano-banana/edit", etc.
+  
+  // Status do job
+  status          String   @default("PENDING")  // PENDING, STARTED, PROCESSING, COMPLETED, FAILED, CANCELLED
+  progress        Int?     @default(0)          // 0-100
+  progressMessage String?  @map("progress_message")
+  
+  // Input e Output
+  input           Json                        // Payload de entrada
+  output          Json?                       // Resultado (imagens, etc.)
+  error           Json?                       // Detalhes do erro
+  
+  // Metadados
+  metadata        Json?                       // Dados extras (requestId, duration, etc.)
+  
+  // Timestamps
+  startedAt       DateTime? @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([status])
+  @@index([triggerRunId])
+  @@map("ai_jobs")
+}
 
 // ============================================
 // ÍNDICES E OTIMIZAÇÕES

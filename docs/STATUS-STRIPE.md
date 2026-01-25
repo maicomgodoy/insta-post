@@ -48,14 +48,18 @@
   - Interval: **Monthly (Mensal)**
   - Obter o **Price ID** de cada preço
 
-- [ ] **Atualizar `prisma/seed.ts`** com os Price IDs reais:
-  ```typescript
-  stripePriceId: 'price_xxxxx', // Substituir pelos IDs reais
+- [ ] **Definir Price IDs no `.env`** (não é mais preciso editar o `seed`):
   ```
+  STRIPE_PRICE_STARTER=price_...
+  STRIPE_PRICE_PRO=price_...
+  STRIPE_PRICE_PREMIUM=price_...
+  STRIPE_PRICE_AGENCY=price_...
+  ```
+  Ver `.env.example` e [CONFIG-OPCAO-B.md](./CONFIG-OPCAO-B.md).
 
 - [ ] **Executar o seed:**
   ```bash
-  npx tsx prisma/seed.ts
+  pnpm run db:seed
   ```
 
 - [ ] **Configurar Webhook no Stripe Dashboard:**
@@ -86,10 +90,9 @@
 - [ ] Criar produto "Agência" (R$ 299,90/mês, recorrente mensal)
 - [ ] Copiar os **Price IDs** (começam com `price_`)
 
-### 2. Atualizar Seed
-- [ ] Abrir `prisma/seed.ts`
-- [ ] Substituir `stripePriceId: null` pelos Price IDs reais
-- [ ] Executar `npx tsx prisma/seed.ts`
+### 2. Variáveis de ambiente e seed
+- [ ] Definir `STRIPE_PRICE_STARTER`, `STRIPE_PRICE_PRO`, `STRIPE_PRICE_PREMIUM`, `STRIPE_PRICE_AGENCY` no `.env`
+- [ ] Executar `pnpm run db:seed`
 
 ### 3. Configurar Webhook
 - [ ] No Stripe Dashboard, ir em **Developers** → **Webhooks**
@@ -98,12 +101,17 @@
 - [ ] Copiar o **Signing Secret** (começa com `whsec_`)
 - [ ] Adicionar ao `.env.local` como `STRIPE_WEBHOOK_SECRET`
 
-### 4. Variáveis de Ambiente Necessárias
+### 4. Variáveis de ambiente
+Ver `.env.example` e [CONFIG-OPCAO-B.md](./CONFIG-OPCAO-B.md). Resumo:
 ```env
-# Stripe
-STRIPE_SECRET_KEY=sk_test_xxxxx  # Chave secreta (modo teste)
-STRIPE_WEBHOOK_SECRET=whsec_xxxxx  # Secret do webhook
+STRIPE_SECRET_KEY=sk_test_xxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxx
+STRIPE_PRICE_STARTER=price_...
+STRIPE_PRICE_PRO=price_...
+STRIPE_PRICE_PREMIUM=price_...
+STRIPE_PRICE_AGENCY=price_...
 ```
+Após preencher, rode `pnpm run config:check` para validar.
 
 ---
 

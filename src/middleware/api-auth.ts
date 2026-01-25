@@ -10,6 +10,37 @@ export interface AuthUser {
 }
 
 /**
+ * Resultado da validação de autenticação
+ */
+export type ValidateApiAuthResult =
+  | { success: true; user: AuthUser }
+  | { success: false; error: string; status: number }
+
+/**
+ * Valida a autenticação de uma requisição API
+ * Retorna um resultado estruturado com sucesso/falha
+ * 
+ * @param request NextRequest
+ * @returns Resultado da validação com user ou erro
+ */
+export async function validateApiAuth(request: NextRequest): Promise<ValidateApiAuthResult> {
+  const user = await getAuthUser(request)
+  
+  if (!user) {
+    return {
+      success: false,
+      error: 'Unauthorized',
+      status: 401,
+    }
+  }
+  
+  return {
+    success: true,
+    user,
+  }
+}
+
+/**
  * Extrai e valida o usuário do token JWT
  * 
  * @param request NextRequest
